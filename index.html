@@ -1,0 +1,1666 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>GRAVITON LIBRARY SYSTEM</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --cyan:#00FFFF;--purple:#7B2FBE;--orange:#FF6B00;
+    --text:#E0F7FA;--success:#00FF88;--danger:#FF3860;
+    --bg:#000008;
+  }
+  html,body,#root{height:100%;width:100%;overflow:hidden}
+  body{font-family:'Rajdhani',sans-serif;background:var(--bg);color:var(--text)}
+  /* Scrollbar */
+  ::-webkit-scrollbar{width:6px;height:6px}
+  ::-webkit-scrollbar-track{background:rgba(0,255,255,0.05)}
+  ::-webkit-scrollbar-thumb{background:var(--cyan);border-radius:3px}
+  /* Fonts */
+  .font-orbitron{font-family:'Orbitron',sans-serif}
+  .font-rajdhani{font-family:'Rajdhani',sans-serif}
+  /* Glow text */
+  .glow-cyan{text-shadow:0 0 10px #00FFFF,0 0 20px #00FFFF,0 0 40px #00FFFF}
+  .glow-purple{text-shadow:0 0 10px #7B2FBE,0 0 20px #7B2FBE}
+  .glow-orange{text-shadow:0 0 10px #FF6B00,0 0 20px #FF6B00}
+  .glow-success{text-shadow:0 0 10px #00FF88,0 0 20px #00FF88}
+  .glow-danger{text-shadow:0 0 10px #FF3860,0 0 20px #FF3860}
+  /* Glass card */
+  .glass{
+    background:rgba(0,10,30,0.85);
+    backdrop-filter:blur(12px);
+    -webkit-backdrop-filter:blur(12px);
+    border:1px solid rgba(0,255,255,0.3);
+    border-radius:12px;
+    box-shadow:0 0 20px rgba(0,255,255,0.1),inset 0 0 20px rgba(0,255,255,0.02);
+  }
+  .glass:hover{
+    border-color:rgba(0,255,255,0.7);
+    box-shadow:0 0 30px rgba(0,255,255,0.25),inset 0 0 30px rgba(0,255,255,0.05);
+    transform:translateY(-6px);
+    transition:all 0.3s ease;
+  }
+  .glass-static{
+    background:rgba(0,10,30,0.85);
+    backdrop-filter:blur(12px);
+    -webkit-backdrop-filter:blur(12px);
+    border:1px solid rgba(0,255,255,0.3);
+    border-radius:12px;
+    box-shadow:0 0 20px rgba(0,255,255,0.1);
+  }
+  /* Button gradient */
+  .btn-primary{
+    background:linear-gradient(135deg,var(--cyan),var(--purple));
+    color:#000;font-weight:700;
+    border:none;border-radius:8px;
+    padding:10px 22px;cursor:pointer;
+    font-family:'Orbitron',sans-serif;font-size:0.75rem;letter-spacing:1px;
+    transition:all 0.3s ease;
+    box-shadow:0 0 15px rgba(0,255,255,0.4);
+    position:relative;overflow:hidden;
+  }
+  .btn-primary:hover{
+    transform:translateY(-3px);
+    box-shadow:0 0 30px rgba(0,255,255,0.7),0 0 60px rgba(123,47,190,0.4);
+  }
+  .btn-danger{
+    background:linear-gradient(135deg,#FF3860,#7B2FBE);
+    color:#fff;font-weight:700;
+    border:none;border-radius:8px;
+    padding:8px 16px;cursor:pointer;
+    font-family:'Rajdhani',sans-serif;font-size:0.85rem;
+    transition:all 0.3s ease;
+    box-shadow:0 0 10px rgba(255,56,96,0.3);
+  }
+  .btn-danger:hover{transform:translateY(-2px);box-shadow:0 0 20px rgba(255,56,96,0.6)}
+  .btn-sm{
+    background:linear-gradient(135deg,var(--cyan),var(--purple));
+    color:#000;font-weight:700;
+    border:none;border-radius:6px;
+    padding:6px 14px;cursor:pointer;
+    font-family:'Rajdhani',sans-serif;font-size:0.82rem;
+    transition:all 0.3s ease;
+    box-shadow:0 0 8px rgba(0,255,255,0.3);
+  }
+  .btn-sm:hover{transform:translateY(-2px);box-shadow:0 0 18px rgba(0,255,255,0.6)}
+  .btn-warning{
+    background:linear-gradient(135deg,#FF6B00,#7B2FBE);
+    color:#fff;font-weight:700;
+    border:none;border-radius:6px;
+    padding:6px 14px;cursor:pointer;
+    font-family:'Rajdhani',sans-serif;font-size:0.82rem;
+    transition:all 0.3s ease;
+    box-shadow:0 0 8px rgba(255,107,0,0.3);
+  }
+  .btn-warning:hover{transform:translateY(-2px);box-shadow:0 0 18px rgba(255,107,0,0.6)}
+  .btn-success{
+    background:linear-gradient(135deg,#00FF88,#00BFFF);
+    color:#000;font-weight:700;
+    border:none;border-radius:6px;
+    padding:6px 14px;cursor:pointer;
+    font-family:'Rajdhani',sans-serif;font-size:0.82rem;
+    transition:all 0.3s ease;
+    box-shadow:0 0 8px rgba(0,255,136,0.3);
+  }
+  .btn-success:hover{transform:translateY(-2px);box-shadow:0 0 18px rgba(0,255,136,0.6)}
+  /* Input styles */
+  .input-field{
+    background:rgba(0,20,50,0.8);
+    border:none;border-bottom:2px solid var(--cyan);
+    color:var(--text);padding:10px 12px;
+    border-radius:6px 6px 0 0;width:100%;
+    font-family:'Rajdhani',sans-serif;font-size:1rem;
+    transition:all 0.3s ease;outline:none;
+  }
+  .input-field:focus{
+    border-bottom-color:#7B2FBE;
+    box-shadow:0 2px 0 0 #7B2FBE,0 0 15px rgba(123,47,190,0.3);
+    background:rgba(0,30,70,0.9);
+  }
+  .input-field::placeholder{color:rgba(224,247,250,0.3)}
+  select.input-field option{background:#000820;color:var(--text)}
+  /* Canvas positioning */
+  #starCanvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none}
+  .app-layer{position:relative;z-index:1;height:100vh;display:flex;flex-direction:column}
+  /* Animations */
+  @keyframes floatUp{from{opacity:0;transform:translateY(40px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes pulse-border{0%,100%{border-color:rgba(0,255,255,0.3);box-shadow:0 0 20px rgba(0,255,255,0.1)}50%{border-color:rgba(0,255,255,0.8);box-shadow:0 0 40px rgba(0,255,255,0.35)}}
+  @keyframes pulse-orange{0%,100%{box-shadow:0 0 0 0 rgba(255,107,0,0.4)}50%{box-shadow:0 0 0 8px rgba(255,107,0,0)}}
+  @keyframes spin-slow{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+  @keyframes modalIn{from{opacity:0;transform:scale(0.8) translateY(-20px);filter:blur(8px)}to{opacity:1;transform:scale(1) translateY(0);filter:blur(0)}}
+  @keyframes toastIn{from{opacity:0;transform:translateX(120%)}to{opacity:1;transform:translateX(0)}}
+  @keyframes toastOut{from{opacity:1;transform:translateX(0)}to{opacity:0;transform:translateX(120%)}}
+  @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+  @keyframes pageFade{from{opacity:0;transform:translateY(15px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes ripple{0%{transform:scale(0);opacity:0.7}100%{transform:scale(4);opacity:0}}
+  @keyframes waveExpand{0%{transform:scale(0);opacity:0.6}100%{transform:scale(3);opacity:0}}
+  .float-up{animation:floatUp 0.6s ease forwards}
+  .pulse-border{animation:pulse-border 3s ease-in-out infinite}
+  .modal-in{animation:modalIn 0.35s ease forwards}
+  .toast-in{animation:toastIn 0.4s ease forwards}
+  .page-fade{animation:pageFade 0.4s ease forwards}
+  /* Active sidebar item */
+  .nav-active{
+    background:rgba(0,255,255,0.12);
+    border-left:3px solid var(--cyan);
+    box-shadow:inset 0 0 20px rgba(0,255,255,0.05);
+  }
+  .nav-active .nav-icon{color:var(--cyan);filter:drop-shadow(0 0 8px var(--cyan))}
+  .nav-active .nav-label{color:var(--cyan)}
+  /* Stat card big number */
+  .stat-num{font-family:'Orbitron',sans-serif;font-size:2.2rem;font-weight:900}
+  /* Table */
+  table{border-collapse:collapse;width:100%}
+  th{background:rgba(0,255,255,0.08);color:var(--cyan);font-family:'Orbitron',sans-serif;font-size:0.68rem;letter-spacing:1px;padding:10px 14px;text-align:left;cursor:pointer;user-select:none;white-space:nowrap}
+  th:hover{background:rgba(0,255,255,0.15)}
+  td{padding:10px 14px;border-bottom:1px solid rgba(0,255,255,0.08);font-size:0.92rem;color:var(--text)}
+  tr:hover td{background:rgba(0,255,255,0.04)}
+  /* Badge */
+  .badge{display:inline-flex;align-items:center;padding:2px 10px;border-radius:20px;font-size:0.75rem;font-weight:700;font-family:'Orbitron',sans-serif;letter-spacing:0.5px}
+  .badge-success{background:rgba(0,255,136,0.15);color:#00FF88;border:1px solid rgba(0,255,136,0.4)}
+  .badge-danger{background:rgba(255,56,96,0.15);color:#FF3860;border:1px solid rgba(255,56,96,0.4)}
+  .badge-warning{background:rgba(255,107,0,0.15);color:#FF6B00;border:1px solid rgba(255,107,0,0.4)}
+  .badge-info{background:rgba(0,255,255,0.15);color:#00FFFF;border:1px solid rgba(0,255,255,0.4)}
+  .badge-grey{background:rgba(150,150,150,0.15);color:#aaa;border:1px solid rgba(150,150,150,0.3)}
+  /* Sidebar */
+  .sidebar{width:220px;min-width:220px;background:rgba(0,5,20,0.95);border-right:1px solid rgba(0,255,255,0.15);overflow-y:auto;display:flex;flex-direction:column}
+  .sidebar-logo{padding:20px 16px;border-bottom:1px solid rgba(0,255,255,0.15)}
+  .nav-item{display:flex;align-items:center;gap:12px;padding:13px 18px;cursor:pointer;transition:all 0.25s ease;border-left:3px solid transparent;font-size:0.92rem}
+  .nav-item:hover{background:rgba(0,255,255,0.07);border-left-color:rgba(0,255,255,0.3)}
+  .nav-icon{font-size:1.1rem;opacity:0.7;min-width:20px;text-align:center}
+  /* Mobile bottom bar */
+  .bottom-bar{display:none;position:fixed;bottom:0;left:0;right:0;background:rgba(0,5,20,0.97);border-top:1px solid rgba(0,255,255,0.2);z-index:100;padding:6px 0}
+  @media(max-width:768px){
+    .sidebar{display:none}
+    .bottom-bar{display:flex;justify-content:space-around}
+    .main-area{margin-bottom:64px}
+    .stat-num{font-size:1.6rem}
+  }
+  /* Error */
+  .field-error{color:#FF3860;font-size:0.8rem;margin-top:4px;font-family:'Rajdhani',sans-serif;text-shadow:0 0 8px rgba(255,56,96,0.5)}
+  /* Toggle */
+  .toggle-track{width:48px;height:26px;border-radius:13px;background:rgba(100,100,100,0.4);position:relative;cursor:pointer;transition:background 0.3s}
+  .toggle-track.on{background:rgba(0,255,255,0.3);box-shadow:0 0 12px rgba(0,255,255,0.4)}
+  .toggle-thumb{position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#888;transition:all 0.3s}
+  .toggle-track.on .toggle-thumb{left:25px;background:var(--cyan);box-shadow:0 0 8px var(--cyan)}
+  /* Glow number badge */
+  .pulse-badge{animation:pulse-orange 2s ease-in-out infinite}
+  /* Empty state */
+  .empty-state{text-align:center;padding:60px 20px;color:rgba(0,255,255,0.4);font-family:'Orbitron',sans-serif;font-size:0.85rem;letter-spacing:2px}
+  .empty-icon{font-size:3rem;margin-bottom:12px;opacity:0.4}
+</style>
+</head>
+<body>
+<canvas id="starCanvas"></canvas>
+<div id="root"></div>
+<script type="text/babel">
+const {useState,useEffect,useRef,useCallback,useMemo}=React;
+
+// ═══════════════════════════════════════════════════════════════
+// INITIAL DATA
+// ═══════════════════════════════════════════════════════════════
+const INITIAL_USERS=[
+  {id:'u1',username:'librarian',password:'lib123',role:'librarian',name:'Dr. Sarah Connor'},
+  {id:'u2',username:'student1',password:'mem123',role:'member',name:'Ravi Kumar',membershipId:'M001',memberType:'Student',maxBooks:3,email:'ravi@email.com'},
+  {id:'u3',username:'faculty1',password:'fac123',role:'member',name:'Dr. Priya Sharma',membershipId:'M002',memberType:'Faculty',maxBooks:5,email:'priya@email.com'},
+  {id:'u4',username:'admin',password:'adm123',role:'admin',name:'Administrator'},
+];
+const INITIAL_BOOKS=[
+  {isbn:'978-1',title:'Effective Java',author:'Joshua Bloch',category:'Programming',totalCopies:3,availableCopies:3},
+  {isbn:'978-2',title:'Clean Code',author:'Robert Martin',category:'Programming',totalCopies:2,availableCopies:2},
+  {isbn:'978-3',title:'The Pragmatic Programmer',author:'David Thomas',category:'Programming',totalCopies:4,availableCopies:4},
+  {isbn:'978-4',title:'Design Patterns',author:'Gang of Four',category:'Architecture',totalCopies:2,availableCopies:2},
+  {isbn:'978-5',title:'Introduction to Algorithms',author:'Cormen',category:'Computer Science',totalCopies:5,availableCopies:5},
+  {isbn:'978-6',title:'Artificial Intelligence',author:'Russell and Norvig',category:'AI',totalCopies:3,availableCopies:3},
+  {isbn:'978-7',title:'Database Systems',author:'Ramakrishnan',category:'Database',totalCopies:2,availableCopies:2},
+  {isbn:'978-8',title:'Operating Systems',author:'Silberschatz',category:'Systems',totalCopies:4,availableCopies:4},
+];
+
+// ═══════════════════════════════════════════════════════════════
+// HELPERS
+// ═══════════════════════════════════════════════════════════════
+function today(){return new Date().toISOString().split('T')[0]}
+function addDays(d,n){const dt=new Date(d);dt.setDate(dt.getDate()+n);return dt.toISOString().split('T')[0]}
+function daysBetween(a,b){return Math.floor((new Date(b)-new Date(a))/(1000*86400))}
+function formatDate(d){if(!d)return'-';const dt=new Date(d);return dt.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'})}
+
+// ═══════════════════════════════════════════════════════════════
+// STAR CANVAS
+// ═══════════════════════════════════════════════════════════════
+function StarCanvas(){
+  const canvasRef=useRef(null);
+  useEffect(()=>{
+    const canvas=document.getElementById('starCanvas');
+    const ctx=canvas.getContext('2d');
+    let W=window.innerWidth,H=window.innerHeight;
+    canvas.width=W;canvas.height=H;
+    const stars=Array.from({length:300},()=>({
+      x:Math.random()*W,y:Math.random()*H,
+      ox:0,oy:0,
+      size:Math.random()*1.8+0.3,
+      speed:Math.random()*0.4+0.1,
+      angle:Math.random()*Math.PI*2,
+      twinkle:Math.random()*Math.PI*2,
+    }));
+    let waves=[];
+    let lastWave=0;
+    let frame=0;
+    function addWave(){waves.push({r:0,opacity:0.6,born:frame})}
+    function draw(){
+      frame++;
+      ctx.clearRect(0,0,W,H);
+      // Gravitational wave rings
+      if(frame-lastWave>180){lastWave=frame;addWave()}
+      waves=waves.filter(w=>w.opacity>0.01);
+      waves.forEach(w=>{
+        w.r+=1.8;w.opacity*=0.985;
+        ctx.beginPath();
+        ctx.arc(W/2,H/2,w.r,0,Math.PI*2);
+        ctx.strokeStyle=`rgba(0,255,255,${w.opacity*0.5})`;
+        ctx.lineWidth=1.5;ctx.stroke();
+        // second ring
+        if(w.r>30){
+          ctx.beginPath();
+          ctx.arc(W/2,H/2,w.r-25,0,Math.PI*2);
+          ctx.strokeStyle=`rgba(123,47,190,${w.opacity*0.3})`;
+          ctx.lineWidth=1;ctx.stroke();
+        }
+      });
+      // Stars
+      stars.forEach(s=>{
+        s.angle+=s.speed*0.005;
+        s.x+=Math.cos(s.angle)*s.speed;
+        s.y+=Math.sin(s.angle)*s.speed;
+        if(s.x<0)s.x=W;if(s.x>W)s.x=0;
+        if(s.y<0)s.y=H;if(s.y>H)s.y=0;
+        // Gravitational lensing warp near center
+        const dx=s.x-W/2,dy=s.y-H/2;
+        const dist=Math.sqrt(dx*dx+dy*dy);
+        const lensR=200;
+        let rx=s.x,ry=s.y;
+        if(dist<lensR&&dist>5){
+          const f=(1-(dist/lensR))*0.15;
+          rx=s.x+dx*f;ry=s.y+dy*f;
+        }
+        s.twinkle+=0.04;
+        const twinkle=0.5+0.5*Math.sin(s.twinkle);
+        const alpha=0.4+0.6*twinkle;
+        ctx.beginPath();
+        ctx.arc(rx,ry,s.size,0,Math.PI*2);
+        ctx.fillStyle=`rgba(${twinkle>0.7?'0,255,255':'200,220,255'},${alpha})`;
+        ctx.fill();
+      });
+      requestAnimationFrame(draw);
+    }
+    draw();
+    const onResize=()=>{W=window.innerWidth;H=window.innerHeight;canvas.width=W;canvas.height=H};
+    window.addEventListener('resize',onResize);
+    return()=>window.removeEventListener('resize',onResize);
+  },[]);
+  return null;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// TOAST
+// ═══════════════════════════════════════════════════════════════
+function ToastContainer({toasts,removeToast}){
+  return(
+    <div style={{position:'fixed',top:80,right:20,zIndex:9999,display:'flex',flexDirection:'column',gap:10,maxWidth:360}}>
+      {toasts.map(t=>(
+        <div key={t.id} className="glass-static toast-in" style={{
+          padding:'14px 18px',borderRadius:10,
+          borderColor:t.type==='success'?'rgba(0,255,136,0.5)':t.type==='error'?'rgba(255,56,96,0.5)':'rgba(255,107,0,0.5)',
+          boxShadow:`0 0 20px ${t.type==='success'?'rgba(0,255,136,0.3)':t.type==='error'?'rgba(255,56,96,0.3)':'rgba(255,107,0,0.3)'}`,
+          display:'flex',alignItems:'center',gap:12,cursor:'pointer',
+        }} onClick={()=>removeToast(t.id)}>
+          <span style={{fontSize:'1.3rem'}}>{t.type==='success'?'✅':t.type==='error'?'❌':'⚠️'}</span>
+          <span style={{fontFamily:'Rajdhani',fontSize:'0.95rem',color:t.type==='success'?'#00FF88':t.type==='error'?'#FF3860':'#FF6B00',fontWeight:600}}>{t.message}</span>
+        </div>
+      ))}
+    </div>
+  );
+}
+function useToast(){
+  const [toasts,setToasts]=useState([]);
+  const addToast=useCallback((message,type='success')=>{
+    const id=Date.now();
+    setToasts(p=>[...p,{id,message,type}]);
+    setTimeout(()=>setToasts(p=>p.filter(t=>t.id!==id)),3000);
+  },[]);
+  const removeToast=useCallback((id)=>setToasts(p=>p.filter(t=>t.id!==id)),[]);
+  return{toasts,addToast,removeToast};
+}
+
+// ═══════════════════════════════════════════════════════════════
+// MODAL
+// ═══════════════════════════════════════════════════════════════
+function Modal({open,onClose,title,children,width='500px'}){
+  if(!open)return null;
+  return(
+    <div style={{position:'fixed',inset:0,zIndex:1000,display:'flex',alignItems:'center',justifyContent:'center',padding:'20px'}}
+      onClick={e=>{if(e.target===e.currentTarget)onClose()}}>
+      <div style={{position:'absolute',inset:0,background:'rgba(0,0,8,0.75)',backdropFilter:'blur(4px)'}}/>
+      <div className="glass-static modal-in" style={{position:'relative',width:'100%',maxWidth:width,maxHeight:'90vh',overflowY:'auto',padding:'28px'}}>
+        <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:20}}>
+          <h2 className="font-orbitron glow-cyan" style={{fontSize:'1rem',letterSpacing:2,color:'var(--cyan)'}}>{title}</h2>
+          <button onClick={onClose} style={{background:'none',border:'none',color:'rgba(0,255,255,0.6)',fontSize:'1.4rem',cursor:'pointer',lineHeight:1}}>✕</button>
+        </div>
+        {children}
+      </div>
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════════
+// SORT TABLE HOOK
+// ═══════════════════════════════════════════════════════════════
+function useSortedData(data,defaultKey=''){
+  const [sortKey,setSortKey]=useState(defaultKey);
+  const [sortDir,setSortDir]=useState('asc');
+  const sort=(key)=>{if(sortKey===key)setSortDir(d=>d==='asc'?'desc':'asc');else{setSortKey(key);setSortDir('asc')}};
+  const sorted=useMemo(()=>{
+    if(!sortKey)return data;
+    return [...data].sort((a,b)=>{
+      const av=a[sortKey]??'',bv=b[sortKey]??'';
+      const cmp=typeof av==='number'?av-bv:String(av).localeCompare(String(bv));
+      return sortDir==='asc'?cmp:-cmp;
+    });
+  },[data,sortKey,sortDir]);
+  const SortIcon=({k})=><span style={{marginLeft:4,opacity:sortKey===k?1:0.3,fontSize:'0.7rem'}}>{sortKey===k&&sortDir==='desc'?'▼':'▲'}</span>;
+  return{sorted,sort,sortKey,sortDir,SortIcon};
+}
+
+// ═══════════════════════════════════════════════════════════════
+// CLOCK
+// ═══════════════════════════════════════════════════════════════
+function Clock(){
+  const [time,setTime]=useState(new Date());
+  useEffect(()=>{const t=setInterval(()=>setTime(new Date()),1000);return()=>clearInterval(t)},[]);
+  return(
+    <span className="font-orbitron glow-cyan" style={{fontSize:'0.72rem',color:'var(--cyan)',letterSpacing:1}}>
+      {time.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'})} &nbsp;
+      {time.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',second:'2-digit'})}
+    </span>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════════
+// LOGIN SCREEN
+// ═══════════════════════════════════════════════════════════════
+function LoginScreen({onLogin,allUsers}){
+  const [username,setUsername]=useState('');
+  const [password,setPassword]=useState('');
+  const [error,setError]=useState('');
+  const [ripple,setRipple]=useState(null);
+  const doLogin=(u,p)=>{
+    const trimU=u.trim(), trimP=p.trim();
+    const user=(allUsers||INITIAL_USERS).find(x=>x.username===trimU&&x.password===trimP);
+    if(user){setError('');onLogin(user)}
+    else setError('Invalid credentials. Try again.');
+  };
+  const handleSubmit=(e)=>{e.preventDefault();doLogin(username,password)};
+  const quickLogin=(u,p)=>{setUsername(u);setPassword(p);setTimeout(()=>doLogin(u,p),100)};
+  const handleRipple=(e)=>{
+    const btn=e.currentTarget;
+    const rect=btn.getBoundingClientRect();
+    const x=e.clientX-rect.left,y=e.clientY-rect.top;
+    setRipple({x,y,id:Date.now()});
+    setTimeout(()=>setRipple(null),700);
+  };
+  const presets=[
+    {label:'Login as Librarian',u:'librarian',p:'lib123',badge:'lib123'},
+    {label:'Login as Member',u:'student1',p:'mem123',badge:'mem123'},
+    {label:'Login as Admin',u:'admin',p:'adm123',badge:'adm123'},
+  ];
+  return(
+    <div style={{display:'flex',alignItems:'center',justifyContent:'center',height:'100vh'}}>
+      <div className="glass float-up pulse-border" style={{width:'100%',maxWidth:440,padding:'40px 36px'}}>
+        <div style={{textAlign:'center',marginBottom:32}}>
+          <div style={{fontSize:'2rem',marginBottom:8}}>⚛️</div>
+          <h1 className="font-orbitron glow-cyan" style={{fontSize:'1.4rem',letterSpacing:3,color:'var(--cyan)',marginBottom:8}}>GRAVITON LIBRARY SYSTEM</h1>
+          <p style={{color:'rgba(0,255,255,0.5)',fontFamily:'Rajdhani',fontSize:'0.9rem',letterSpacing:2}}>QUANTUM ACCESS TERMINAL</p>
+        </div>
+        <form onSubmit={handleSubmit} style={{display:'flex',flexDirection:'column',gap:20}}>
+          <div>
+            <label style={{display:'block',fontSize:'0.75rem',color:'rgba(0,255,255,0.6)',fontFamily:'Orbitron',letterSpacing:1,marginBottom:6}}>USERNAME</label>
+            <input className="input-field" value={username} onChange={e=>setUsername(e.target.value)} placeholder="Enter username" autoComplete="off"/>
+          </div>
+          <div>
+            <label style={{display:'block',fontSize:'0.75rem',color:'rgba(0,255,255,0.6)',fontFamily:'Orbitron',letterSpacing:1,marginBottom:6}}>PASSWORD</label>
+            <input className="input-field" type="password" value={password} onChange={e=>setPassword(e.target.value)} placeholder="Enter password"/>
+          </div>
+          {error&&<p style={{color:'#FF3860',textShadow:'0 0 8px rgba(255,56,96,0.6)',fontFamily:'Rajdhani',fontSize:'0.9rem',textAlign:'center'}}>{error}</p>}
+          <button type="submit" className="btn-primary" style={{width:'100%',padding:'13px',fontSize:'0.9rem',position:'relative',overflow:'hidden'}} onClick={handleRipple}>
+            {ripple&&<span style={{position:'absolute',left:ripple.x,top:ripple.y,width:10,height:10,borderRadius:'50%',background:'rgba(255,255,255,0.4)',transform:'translate(-50%,-50%)',animation:'ripple 0.7s ease-out forwards',pointerEvents:'none'}}/>}
+            INITIALIZE ACCESS
+          </button>
+        </form>
+        <div style={{marginTop:28,display:'flex',flexDirection:'column',gap:10}}>
+          <p style={{textAlign:'center',color:'rgba(0,255,255,0.4)',fontSize:'0.75rem',fontFamily:'Orbitron',letterSpacing:1}}>QUICK ACCESS</p>
+          {presets.map(pr=>(
+            <button key={pr.u} onClick={()=>quickLogin(pr.u,pr.p)} style={{
+              background:'rgba(0,255,255,0.05)',border:'1px solid rgba(0,255,255,0.2)',borderRadius:8,
+              color:'var(--text)',padding:'10px 14px',cursor:'pointer',
+              display:'flex',justifyContent:'space-between',alignItems:'center',
+              fontFamily:'Rajdhani',fontSize:'0.92rem',transition:'all 0.25s',
+            }} onMouseOver={e=>e.currentTarget.style.background='rgba(0,255,255,0.1)'}
+               onMouseOut={e=>e.currentTarget.style.background='rgba(0,255,255,0.05)'}>
+              <span>{pr.label}</span>
+              <span className="badge badge-info" style={{fontSize:'0.65rem'}}>{pr.badge}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+      <div style={{position:'fixed',bottom:14,left:18,color:'rgba(0,255,255,0.4)',fontSize:'0.7rem',fontFamily:'Orbitron',letterSpacing:1}}>
+        ★ 300 PARTICLES
+      </div>
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════════
+// HEADER
+// ═══════════════════════════════════════════════════════════════
+function Header({user,onLogout}){
+  return(
+    <div style={{height:60,background:'rgba(0,5,20,0.95)',borderBottom:'1px solid rgba(0,255,255,0.2)',display:'flex',alignItems:'center',justifyContent:'space-between',padding:'0 24px',flexShrink:0,zIndex:10}}>
+      <div style={{display:'flex',alignItems:'center',gap:12}}>
+        <span style={{fontSize:'1.3rem'}}>⚛️</span>
+        <span className="font-orbitron glow-cyan" style={{fontSize:'0.75rem',color:'var(--cyan)',letterSpacing:2}}>GRAVITON LIBRARY</span>
+      </div>
+      <div style={{display:'flex',alignItems:'center',gap:20}}>
+        <Clock/>
+        <div style={{textAlign:'right'}}>
+          <p style={{fontFamily:'Orbitron',fontSize:'0.68rem',color:'rgba(0,255,255,0.6)',letterSpacing:1}}>{user.role.toUpperCase()}</p>
+          <p style={{fontFamily:'Rajdhani',fontSize:'0.95rem',fontWeight:600}}>{user.name}</p>
+        </div>
+        <button onClick={onLogout} className="btn-danger" style={{padding:'6px 14px',fontSize:'0.78rem'}}>LOGOUT</button>
+      </div>
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════════
+// STAT CARD
+// ═══════════════════════════════════════════════════════════════
+function StatCard({icon,label,value,color='var(--cyan)',pulse=false}){
+  const isOverZero=value>0&&pulse;
+  return(
+    <div className="glass" style={{padding:'20px 24px',display:'flex',flexDirection:'column',gap:8,cursor:'default'}}>
+      <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start'}}>
+        <span style={{fontSize:'1.6rem'}}>{icon}</span>
+        {isOverZero&&<span className="badge badge-warning pulse-badge" style={{fontSize:'0.65rem'}}>{value}</span>}
+      </div>
+      <p className="stat-num" style={{color,textShadow:`0 0 20px ${color}`}}>{value}</p>
+      <p style={{color:'rgba(224,247,250,0.6)',fontFamily:'Rajdhani',fontSize:'0.82rem',letterSpacing:1}}>{label}</p>
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════════
+// LIBRARIAN DASHBOARD
+// ═══════════════════════════════════════════════════════════════
+function LibrarianDashboard({currentUser,state,dispatch,addToast}){
+  const [page,setPage]=useState('dashboard');
+  const navItems=[
+    {id:'dashboard',icon:'📊',label:'Dashboard'},
+    {id:'books',icon:'📚',label:'Manage Books'},
+    {id:'issue',icon:'📤',label:'Issue Book'},
+    {id:'return',icon:'📥',label:'Return Book'},
+    {id:'members',icon:'👥',label:'Manage Members'},
+    {id:'reservations',icon:'🔖',label:'Reservations'},
+    {id:'reports',icon:'📋',label:'Reports'},
+  ];
+  const pageComp={
+    dashboard:<LibDashHome state={state}/>,
+    books:<ManageBooks state={state} dispatch={dispatch} addToast={addToast}/>,
+    issue:<IssueBook state={state} dispatch={dispatch} addToast={addToast}/>,
+    return:<ReturnBook state={state} dispatch={dispatch} addToast={addToast}/>,
+    members:<ManageMembers state={state} dispatch={dispatch} addToast={addToast}/>,
+    reservations:<LibReservations state={state} dispatch={dispatch} addToast={addToast}/>,
+    reports:<LibReports state={state}/>,
+  };
+  return(
+    <div style={{display:'flex',flex:1,overflow:'hidden'}}>
+      <nav className="sidebar">
+        <div className="sidebar-logo">
+          <p className="font-orbitron" style={{fontSize:'0.65rem',color:'var(--cyan)',letterSpacing:2,opacity:0.7}}>LIBRARIAN PANEL</p>
+        </div>
+        {navItems.map(n=>(
+          <div key={n.id} className={`nav-item ${page===n.id?'nav-active':''}`} onClick={()=>setPage(n.id)}>
+            <span className="nav-icon">{n.icon}</span>
+            <span className="nav-label" style={{fontFamily:'Rajdhani',fontWeight:600}}>{n.label}</span>
+          </div>
+        ))}
+      </nav>
+      <div className="main-area" style={{flex:1,overflowY:'auto',padding:'24px'}}>
+        <div className="page-fade" key={page}>{pageComp[page]}</div>
+      </div>
+      {/* Mobile bottom bar */}
+      <div className="bottom-bar">
+        {navItems.map(n=>(
+          <div key={n.id} onClick={()=>setPage(n.id)} style={{display:'flex',flexDirection:'column',alignItems:'center',gap:3,cursor:'pointer',padding:'4px 8px',opacity:page===n.id?1:0.5}}>
+            <span style={{fontSize:'1.1rem'}}>{n.icon}</span>
+            <span style={{fontSize:'0.55rem',fontFamily:'Orbitron',color:page===n.id?'var(--cyan)':'var(--text)',letterSpacing:0.5}}>{n.label.split(' ')[0]}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function LibDashHome({state}){
+  const {books,loans,members,fines}=state;
+  const activeLoans=loans.filter(l=>l.status==='active');
+  const overdue=activeLoans.filter(l=>new Date(l.dueDate)<new Date());
+  const finesCollected=fines.filter(f=>f.paid).reduce((a,b)=>a+b.amount,0);
+  return(
+    <div>
+      <h2 className="font-orbitron glow-cyan" style={{fontSize:'1.1rem',letterSpacing:3,color:'var(--cyan)',marginBottom:24}}>MISSION CONTROL</h2>
+      <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(180px,1fr))',gap:16}}>
+        <StatCard icon="📚" label="TOTAL BOOKS" value={books.reduce((a,b)=>a+b.totalCopies,0)} color="var(--cyan)"/>
+        <StatCard icon="✅" label="AVAILABLE" value={books.reduce((a,b)=>a+b.availableCopies,0)} color="var(--success)"/>
+        <StatCard icon="📤" label="ACTIVE LOANS" value={activeLoans.length} color="var(--cyan)"/>
+        <StatCard icon="⚠️" label="OVERDUE" value={overdue.length} color="var(--orange)" pulse/>
+        <StatCard icon="👥" label="TOTAL MEMBERS" value={members.length} color="var(--purple)"/>
+        <StatCard icon="💰" label="FINES (₹)" value={finesCollected} color="var(--success)"/>
+      </div>
+    </div>
+  );
+}
+
+// ──── MANAGE BOOKS ────
+function ManageBooks({state,dispatch,addToast}){
+  const [search,setSearch]=useState('');
+  const [modal,setModal]=useState(false);
+  const [editing,setEditing]=useState(null);
+  const [form,setForm]=useState({isbn:'',title:'',author:'',category:'',totalCopies:1});
+  const [errors,setErrors]=useState({});
+  const filtered=state.books.filter(b=>
+    b.title.toLowerCase().includes(search.toLowerCase())||
+    b.author.toLowerCase().includes(search.toLowerCase())||
+    b.isbn.includes(search)||
+    b.category.toLowerCase().includes(search.toLowerCase())
+  );
+  const {sorted,sort,SortIcon}=useSortedData(filtered,'title');
+  const openAdd=()=>{setEditing(null);setForm({isbn:'',title:'',author:'',category:'',totalCopies:1});setErrors({});setModal(true)};
+  const openEdit=(b)=>{setEditing(b.isbn);setForm({isbn:b.isbn,title:b.title,author:b.author,category:b.category,totalCopies:b.totalCopies});setErrors({});setModal(true)};
+  const validate=()=>{
+    const e={};
+    if(!form.isbn.trim())e.isbn='ISBN is required';
+    if(!form.title.trim())e.title='Title is required';
+    if(!form.author.trim())e.author='Author is required';
+    if(!form.category.trim())e.category='Category is required';
+    if(!form.totalCopies||form.totalCopies<1)e.totalCopies='At least 1 copy required';
+    if(!editing&&state.books.find(b=>b.isbn===form.isbn.trim()))e.isbn='ISBN already exists';
+    setErrors(e);return Object.keys(e).length===0;
+  };
+  const handleSave=()=>{
+    if(!validate())return;
+    if(editing){
+      dispatch({type:'EDIT_BOOK',payload:{...form,isbn:editing,totalCopies:parseInt(form.totalCopies)}});
+      addToast('Book updated successfully','success');
+    }else{
+      dispatch({type:'ADD_BOOK',payload:{...form,totalCopies:parseInt(form.totalCopies),availableCopies:parseInt(form.totalCopies)}});
+      addToast('Book added to the system','success');
+    }
+    setModal(false);
+  };
+  const handleDelete=(isbn)=>{
+    const hasLoans=state.loans.find(l=>l.bookIsbn===isbn&&l.status==='active');
+    if(hasLoans){addToast('Cannot delete — book has active loans','error');return}
+    dispatch({type:'DELETE_BOOK',payload:isbn});
+    addToast('Book removed from system','success');
+  };
+  return(
+    <div>
+      <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:20,gap:12,flexWrap:'wrap'}}>
+        <h2 className="font-orbitron glow-cyan" style={{fontSize:'1rem',letterSpacing:3,color:'var(--cyan)'}}>BOOK CATALOGUE</h2>
+        <div style={{display:'flex',gap:10,alignItems:'center'}}>
+          <input className="input-field" value={search} onChange={e=>setSearch(e.target.value)} placeholder="🔍 Search books..." style={{width:220}}/>
+          <button className="btn-primary" onClick={openAdd}>+ ADD BOOK</button>
+        </div>
+      </div>
+      <div className="glass-static" style={{overflowX:'auto'}}>
+        {sorted.length===0?<div className="empty-state"><div className="empty-icon">📚</div>NO BOOKS FOUND</div>:(
+          <table>
+            <thead><tr>
+              {[['isbn','ISBN'],['title','TITLE'],['author','AUTHOR'],['category','CATEGORY'],['totalCopies','TOTAL'],['availableCopies','AVAILABLE']].map(([k,l])=>(
+                <th key={k} onClick={()=>sort(k)}>{l}<SortIcon k={k}/></th>
+              ))}
+              <th>ACTIONS</th>
+            </tr></thead>
+            <tbody>{sorted.map(b=>(
+              <tr key={b.isbn}>
+                <td><span className="badge badge-info">{b.isbn}</span></td>
+                <td style={{fontWeight:600}}>{b.title}</td>
+                <td>{b.author}</td>
+                <td><span className="badge badge-grey">{b.category}</span></td>
+                <td style={{textAlign:'center'}}>{b.totalCopies}</td>
+                <td style={{textAlign:'center'}}>
+                  <span className={`badge ${b.availableCopies>0?'badge-success':'badge-danger'}`}>{b.availableCopies}</span>
+                </td>
+                <td style={{display:'flex',gap:6}}>
+                  <button className="btn-sm" onClick={()=>openEdit(b)}>EDIT</button>
+                  <button className="btn-danger" style={{fontSize:'0.78rem',padding:'5px 12px'}} onClick={()=>handleDelete(b.isbn)}>DEL</button>
+                </td>
+              </tr>
+            ))}</tbody>
+          </table>
+        )}
+      </div>
+      <Modal open={modal} onClose={()=>setModal(false)} title={editing?'EDIT BOOK':'ADD NEW BOOK'}>
+        {[['isbn','ISBN'],['title','TITLE'],['author','AUTHOR'],['category','CATEGORY']].map(([k,l])=>(
+          <div key={k} style={{marginBottom:16}}>
+            <label style={{display:'block',fontSize:'0.72rem',color:'rgba(0,255,255,0.6)',fontFamily:'Orbitron',letterSpacing:1,marginBottom:6}}>{l}</label>
+            <input className="input-field" value={form[k]} onChange={e=>setForm(p=>({...p,[k]:e.target.value}))} disabled={!!editing&&k==='isbn'}/>
+            {errors[k]&&<p className="field-error">{errors[k]}</p>}
+          </div>
+        ))}
+        <div style={{marginBottom:20}}>
+          <label style={{display:'block',fontSize:'0.72rem',color:'rgba(0,255,255,0.6)',fontFamily:'Orbitron',letterSpacing:1,marginBottom:6}}>NUMBER OF COPIES</label>
+          <input className="input-field" type="number" min="1" value={form.totalCopies} onChange={e=>setForm(p=>({...p,totalCopies:e.target.value}))}/>
+          {errors.totalCopies&&<p className="field-error">{errors.totalCopies}</p>}
+        </div>
+        <button className="btn-primary" style={{width:'100%'}} onClick={handleSave}>{editing?'UPDATE BOOK':'ADD BOOK'}</button>
+      </Modal>
+    </div>
+  );
+}
+
+// ──── ISSUE BOOK ────
+function IssueBook({state,dispatch,addToast}){
+  const [memberId,setMemberId]=useState('');
+  const [isbn,setIsbn]=useState('');
+  const [errors,setErrors]=useState({});
+  const members=state.members;
+  const availBooks=state.books.filter(b=>b.availableCopies>0);
+  const handleIssue=()=>{
+    const e={};
+    if(!memberId)e.member='Select a member';
+    if(!isbn)e.isbn='Select a book';
+    setErrors(e);
+    if(Object.keys(e).length)return;
+    const member=members.find(m=>m.id===memberId);
+    const book=state.books.find(b=>b.isbn===isbn);
+    const memberLoans=state.loans.filter(l=>l.memberId===memberId&&l.status==='active');
+    if(memberLoans.length>=member.maxBooks){addToast(`${member.name} has reached max borrow limit (${member.maxBooks})!`,'error');return}
+    const issueDate=today();
+    const dueDate=addDays(issueDate,15);
+    dispatch({type:'ISSUE_BOOK',payload:{memberId,bookIsbn:isbn,issueDate,dueDate,memberName:member.name,bookTitle:book.title}});
+    addToast(`"${book.title}" issued to ${member.name}`,'success');
+    setMemberId('');setIsbn('');
+  };
+  return(
+    <div>
+      <h2 className="font-orbitron glow-cyan" style={{fontSize:'1rem',letterSpacing:3,color:'var(--cyan)',marginBottom:24}}>ISSUE BOOK</h2>
+      <div className="glass-static" style={{padding:28,maxWidth:500}}>
+        <div style={{marginBottom:20}}>
+          <label style={{display:'block',fontSize:'0.72rem',color:'rgba(0,255,255,0.6)',fontFamily:'Orbitron',letterSpacing:1,marginBottom:8}}>SELECT MEMBER</label>
+          <select className="input-field" value={memberId} onChange={e=>setMemberId(e.target.value)}>
+            <option value="">-- Choose Member --</option>
+            {members.map(m=><option key={m.id} value={m.id}>{m.name} ({m.membershipId}) — {m.memberType}</option>)}
+          </select>
+          {errors.member&&<p className="field-error">{errors.member}</p>}
+        </div>
+        <div style={{marginBottom:24}}>
+          <label style={{display:'block',fontSize:'0.72rem',color:'rgba(0,255,255,0.6)',fontFamily:'Orbitron',letterSpacing:1,marginBottom:8}}>SELECT BOOK (AVAILABLE ONLY)</label>
+          <select className="input-field" value={isbn} onChange={e=>setIsbn(e.target.value)}>
+            <option value="">-- Choose Book --</option>
+            {availBooks.map(b=><option key={b.isbn} value={b.isbn}>{b.title} — {b.availableCopies} avail.</option>)}
+          </select>
+          {errors.isbn&&<p className="field-error">{errors.isbn}</p>}
+        </div>
+        {memberId&&isbn&&(()=>{
+          const m=members.find(x=>x.id===memberId);
+          const b=state.books.find(x=>x.isbn===isbn);
+          return(
+            <div className="glass" style={{padding:14,marginBottom:20,cursor:'default'}}>
+              <p style={{fontSize:'0.8rem',color:'rgba(0,255,255,0.6)',fontFamily:'Orbitron',letterSpacing:1,marginBottom:8}}>ISSUE PREVIEW</p>
+              <p style={{fontFamily:'Rajdhani',fontSize:'0.95rem'}}><b>{b?.title}</b> → <b>{m?.name}</b></p>
+              <p style={{fontFamily:'Rajdhani',fontSize:'0.85rem',color:'rgba(224,247,250,0.6)'}}>Issue: {formatDate(today())} | Due: {formatDate(addDays(today(),15))}</p>
+            </div>
+          );
+        })()}
+        <button className="btn-primary" style={{width:'100%'}} onClick={handleIssue}>ISSUE BOOK</button>
+      </div>
+    </div>
+  );
+}
+
+// ──── RETURN BOOK ────
+function ReturnBook({state,dispatch,addToast}){
+  const [search,setSearch]=useState('');
+  const activeLoans=state.loans.filter(l=>l.status==='active');
+  const filtered=activeLoans.filter(l=>
+    l.memberName.toLowerCase().includes(search.toLowerCase())||
+    l.bookTitle.toLowerCase().includes(search.toLowerCase())||
+    l.id.toLowerCase().includes(search.toLowerCase())
+  );
+  const {sorted,sort,SortIcon}=useSortedData(filtered,'memberName');
+  const handleReturn=(loan)=>{
+    const today_=today();
+    const overdueDays=daysBetween(loan.dueDate,today_);
+    const fineAmount=overdueDays>0?overdueDays*state.settings.fineRate:0;
+    dispatch({type:'RETURN_BOOK',payload:{loanId:loan.id,returnDate:today_,fineAmount}});
+    // check reservation
+    const res=state.reservations.find(r=>r.bookIsbn===loan.bookIsbn&&r.status==='pending');
+    if(res){addToast(`📌 Reservation pending for "${loan.bookTitle}" — notify ${res.memberName}`,'warning')}
+    if(fineAmount>0){addToast(`"${loan.bookTitle}" returned. Fine: ₹${fineAmount} (${overdueDays} days overdue)`,'warning')}
+    else{addToast(`"${loan.bookTitle}" returned successfully`,'success')}
+  };
+  return(
+    <div>
+      <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:20,flexWrap:'wrap',gap:12}}>
+        <h2 className="font-orbitron glow-cyan" style={{fontSize:'1rem',letterSpacing:3,color:'var(--cyan)'}}>RETURN BOOK</h2>
+        <input className="input-field" value={search} onChange={e=>setSearch(e.target.value)} placeholder="🔍 Search loans..." style={{width:240}}/>
+      </div>
+      <div className="glass-static" style={{overflowX:'auto'}}>
+        {sorted.length===0?<div className="empty-state"><div className="empty-icon">📥</div>NO ACTIVE LOANS</div>:(
+          <table>
+            <thead><tr>
+              {[['id','LOAN ID'],['memberName','MEMBER'],['bookTitle','BOOK'],['issueDate','ISSUED'],['dueDate','DUE DATE']].map(([k,l])=>(
+                <th key={k} onClick={()=>sort(k)}>{l}<SortIcon k={k}/></th>
+              ))}
+              <th>STATUS</th><th>FINE (₹)</th><th>ACTION</th>
+            </tr></thead>
+            <tbody>{sorted.map(l=>{
+              const today_=today();
+              const overdueDays=daysBetween(l.dueDate,today_);
+              const isOverdue=overdueDays>0;
+              const fine=isOverdue?overdueDays*state.settings.fineRate:0;
+              return(
+                <tr key={l.id}>
+                  <td><span className="badge badge-info">{l.id}</span></td>
+                  <td>{l.memberName}</td>
+                  <td style={{fontWeight:600}}>{l.bookTitle}</td>
+                  <td>{formatDate(l.issueDate)}</td>
+                  <td style={{color:isOverdue?'#FF3860':'var(--text)'}}>{formatDate(l.dueDate)}</td>
+                  <td>{isOverdue?<span className="badge badge-danger">OVERDUE {overdueDays}d</span>:<span className="badge badge-success">ACTIVE</span>}</td>
+                  <td style={{color:fine>0?'#FF3860':'var(--success)',fontWeight:700}}>₹{fine}</td>
+                  <td><button className="btn-success" onClick={()=>handleReturn(l)}>RETURN</button></td>
+                </tr>
+              );
+            })}</tbody>
+          </table>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ──── MANAGE MEMBERS ────
+function ManageMembers({state,dispatch,addToast}){
+  const [search,setSearch]=useState('');
+  const [modal,setModal]=useState(false);
+  const [form,setForm]=useState({name:'',username:'',password:'',membershipId:'',memberType:'Student',maxBooks:3,email:''});
+  const [errors,setErrors]=useState({});
+  const filtered=state.members.filter(m=>
+    m.name.toLowerCase().includes(search.toLowerCase())||
+    m.membershipId?.toLowerCase().includes(search.toLowerCase())||
+    m.username.toLowerCase().includes(search.toLowerCase())
+  );
+  const {sorted,sort,SortIcon}=useSortedData(filtered,'name');
+  const validate=()=>{
+    const e={};
+    if(!form.name.trim())e.name='Name is required';
+    if(!form.username.trim())e.username='Username is required';
+    if(state.members.find(m=>m.username===form.username.trim())||INITIAL_USERS.find(u=>u.username===form.username.trim()&&u.role!=='member'))e.username='Username already taken';
+    if(!form.password||form.password.length<4)e.password='Min 4 characters';
+    if(!form.membershipId.trim())e.membershipId='Membership ID required';
+    if(state.members.find(m=>m.membershipId===form.membershipId.trim()))e.membershipId='ID already exists';
+    setErrors(e);return Object.keys(e).length===0;
+  };
+  const handleSave=()=>{
+    if(!validate())return;
+    const id='u'+Date.now();
+    dispatch({type:'ADD_MEMBER',payload:{id,role:'member',...form,maxBooks:parseInt(form.maxBooks)}});
+    addToast(`Member ${form.name} registered`,'success');
+    setModal(false);setForm({name:'',username:'',password:'',membershipId:'',memberType:'Student',maxBooks:3,email:''});
+  };
+  const handleDelete=(id,name)=>{
+    const hasLoans=state.loans.find(l=>l.memberId===id&&l.status==='active');
+    if(hasLoans){addToast(`${name} has active loans — cannot delete`,'error');return}
+    dispatch({type:'DELETE_MEMBER',payload:id});addToast(`Member ${name} removed`,'success');
+  };
+  return(
+    <div>
+      <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:20,flexWrap:'wrap',gap:12}}>
+        <h2 className="font-orbitron glow-cyan" style={{fontSize:'1rem',letterSpacing:3,color:'var(--cyan)'}}>MEMBER REGISTRY</h2>
+        <div style={{display:'flex',gap:10,alignItems:'center'}}>
+          <input className="input-field" value={search} onChange={e=>setSearch(e.target.value)} placeholder="🔍 Search members..." style={{width:200}}/>
+          <button className="btn-primary" onClick={()=>{setErrors({});setModal(true)}}>+ REGISTER</button>
+        </div>
+      </div>
+      <div className="glass-static" style={{overflowX:'auto'}}>
+        {sorted.length===0?<div className="empty-state"><div className="empty-icon">👥</div>NO MEMBERS FOUND</div>:(
+          <table>
+            <thead><tr>
+              {[['membershipId','ID'],['name','NAME'],['memberType','TYPE'],['maxBooks','MAX']].map(([k,l])=>(
+                <th key={k} onClick={()=>sort(k)}>{l}<SortIcon k={k}/></th>
+              ))}
+              <th>ACTIVE LOANS</th><th>TOTAL FINES</th><th>ACTION</th>
+            </tr></thead>
+            <tbody>{sorted.map(m=>{
+              const loans=state.loans.filter(l=>l.memberId===m.id&&l.status==='active').length;
+              const fines=state.fines.filter(f=>f.memberId===m.id&&!f.paid).reduce((a,b)=>a+b.amount,0);
+              return(
+                <tr key={m.id}>
+                  <td><span className="badge badge-info">{m.membershipId}</span></td>
+                  <td style={{fontWeight:600}}>{m.name}</td>
+                  <td><span className="badge badge-grey">{m.memberType}</span></td>
+                  <td style={{textAlign:'center'}}>{m.maxBooks}</td>
+                  <td style={{textAlign:'center'}}>{loans}</td>
+                  <td style={{color:fines>0?'#FF3860':'var(--success)',fontWeight:700}}>₹{fines}</td>
+                  <td><button className="btn-danger" style={{fontSize:'0.75rem',padding:'4px 10px'}} onClick={()=>handleDelete(m.id,m.name)}>REMOVE</button></td>
+                </tr>
+              );
+            })}</tbody>
+          </table>
+        )}
+      </div>
+      <Modal open={modal} onClose={()=>setModal(false)} title="REGISTER NEW MEMBER">
+        {[['name','FULL NAME','text'],['username','USERNAME','text'],['password','PASSWORD','password'],['membershipId','MEMBERSHIP ID','text'],['email','EMAIL','email']].map(([k,l,t])=>(
+          <div key={k} style={{marginBottom:14}}>
+            <label style={{display:'block',fontSize:'0.7rem',color:'rgba(0,255,255,0.6)',fontFamily:'Orbitron',letterSpacing:1,marginBottom:5}}>{l}</label>
+            <input className="input-field" type={t} value={form[k]} onChange={e=>setForm(p=>({...p,[k]:e.target.value}))}/>
+            {errors[k]&&<p className="field-error">{errors[k]}</p>}
+          </div>
+        ))}
+        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12,marginBottom:20}}>
+          <div>
+            <label style={{display:'block',fontSize:'0.7rem',color:'rgba(0,255,255,0.6)',fontFamily:'Orbitron',letterSpacing:1,marginBottom:5}}>TYPE</label>
+            <select className="input-field" value={form.memberType} onChange={e=>setForm(p=>({...p,memberType:e.target.value}))}>
+              <option>Student</option><option>Faculty</option><option>Staff</option>
+            </select>
+          </div>
+          <div>
+            <label style={{display:'block',fontSize:'0.7rem',color:'rgba(0,255,255,0.6)',fontFamily:'Orbitron',letterSpacing:1,marginBottom:5}}>MAX BOOKS</label>
+            <input className="input-field" type="number" min="1" max="10" value={form.maxBooks} onChange={e=>setForm(p=>({...p,maxBooks:e.target.value}))}/>
+          </div>
+        </div>
+        <button className="btn-primary" style={{width:'100%'}} onClick={handleSave}>REGISTER MEMBER</button>
+      </Modal>
+    </div>
+  );
+}
+
+// ──── RESERVATIONS (LIBRARIAN) ────
+function LibReservations({state,dispatch,addToast}){
+  const [search,setSearch]=useState('');
+  const pending=state.reservations.filter(r=>r.status==='pending');
+  const filtered=pending.filter(r=>
+    r.memberName.toLowerCase().includes(search.toLowerCase())||
+    r.bookTitle.toLowerCase().includes(search.toLowerCase())
+  );
+  const {sorted,sort,SortIcon}=useSortedData(filtered,'reservationDate');
+  const cancel=(id)=>{dispatch({type:'CANCEL_RESERVATION',payload:id});addToast('Reservation cancelled','warning')};
+  return(
+    <div>
+      <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:20,flexWrap:'wrap',gap:12}}>
+        <h2 className="font-orbitron glow-cyan" style={{fontSize:'1rem',letterSpacing:3,color:'var(--cyan)'}}>RESERVATION QUEUE</h2>
+        <input className="input-field" value={search} onChange={e=>setSearch(e.target.value)} placeholder="🔍 Search..." style={{width:220}}/>
+      </div>
+      <div className="glass-static" style={{overflowX:'auto'}}>
+        {sorted.length===0?<div className="empty-state"><div className="empty-icon">🔖</div>NO PENDING RESERVATIONS</div>:(
+          <table>
+            <thead><tr>
+              {[['id','RES ID'],['memberName','MEMBER'],['bookTitle','BOOK'],['reservationDate','DATE'],['status','STATUS']].map(([k,l])=>(
+                <th key={k} onClick={()=>sort(k)}>{l}<SortIcon k={k}/></th>
+              ))}
+              <th>ACTION</th>
+            </tr></thead>
+            <tbody>{sorted.map(r=>(
+              <tr key={r.id}>
+                <td><span className="badge badge-info">{r.id}</span></td>
+                <td>{r.memberName}</td>
+                <td style={{fontWeight:600}}>{r.bookTitle}</td>
+                <td>{formatDate(r.reservationDate)}</td>
+                <td><span className="badge badge-warning">PENDING</span></td>
+                <td><button className="btn-danger" style={{fontSize:'0.75rem',padding:'4px 10px'}} onClick={()=>cancel(r.id)}>CANCEL</button></td>
+              </tr>
+            ))}</tbody>
+          </table>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ──── REPORTS (LIBRARIAN) ────
+function LibReports({state}){
+  const [tab,setTab]=useState('all');
+  const overdue=state.loans.filter(l=>{
+    if(l.status!=='active')return false;
+    return new Date(l.dueDate)<new Date();
+  });
+  const finesByMember=state.members.map(m=>({
+    ...m,
+    totalFines:state.fines.filter(f=>f.memberId===m.id).reduce((a,b)=>a+b.amount,0),
+    paidFines:state.fines.filter(f=>f.memberId===m.id&&f.paid).reduce((a,b)=>a+b.amount,0),
+  }));
+  const tabs=['all','overdue','fines'];
+  return(
+    <div>
+      <h2 className="font-orbitron glow-cyan" style={{fontSize:'1rem',letterSpacing:3,color:'var(--cyan)',marginBottom:20}}>SYSTEM REPORTS</h2>
+      <div style={{display:'flex',gap:8,marginBottom:20,flexWrap:'wrap'}}>
+        {tabs.map(t=>(
+          <button key={t} onClick={()=>setTab(t)} className={tab===t?'btn-primary':'btn-sm'} style={{textTransform:'uppercase',letterSpacing:1}}>
+            {t==='all'?'All Books':t==='overdue'?'Overdue Loans':'Fine Summary'}
+          </button>
+        ))}
+      </div>
+      <div className="glass-static" style={{overflowX:'auto'}}>
+        {tab==='all'&&(state.books.length===0?<div className="empty-state"><div className="empty-icon">📚</div>NO BOOKS</div>:(
+          <table>
+            <thead><tr><th>ISBN</th><th>TITLE</th><th>AUTHOR</th><th>CATEGORY</th><th>TOTAL</th><th>AVAILABLE</th></tr></thead>
+            <tbody>{state.books.map(b=>(
+              <tr key={b.isbn}><td>{b.isbn}</td><td>{b.title}</td><td>{b.author}</td><td>{b.category}</td><td>{b.totalCopies}</td>
+              <td><span className={`badge ${b.availableCopies>0?'badge-success':'badge-danger'}`}>{b.availableCopies}</span></td></tr>
+            ))}</tbody>
+          </table>
+        ))}
+        {tab==='overdue'&&(overdue.length===0?<div className="empty-state"><div className="empty-icon">⏰</div>NO OVERDUE LOANS</div>:(
+          <table>
+            <thead><tr><th>LOAN ID</th><th>MEMBER</th><th>BOOK</th><th>DUE DATE</th><th>DAYS OVERDUE</th><th>FINE (₹)</th></tr></thead>
+            <tbody>{overdue.map(l=>{
+              const days=daysBetween(l.dueDate,today());
+              return(<tr key={l.id} style={{background:'rgba(255,56,96,0.06)'}}>
+                <td>{l.id}</td><td>{l.memberName}</td><td>{l.bookTitle}</td>
+                <td style={{color:'#FF3860'}}>{formatDate(l.dueDate)}</td>
+                <td><span className="badge badge-danger">{days}d</span></td>
+                <td style={{color:'#FF3860',fontWeight:700}}>₹{days*state.settings.fineRate}</td>
+              </tr>);
+            })}</tbody>
+          </table>
+        ))}
+        {tab==='fines'&&(finesByMember.length===0?<div className="empty-state"><div className="empty-icon">💰</div>NO DATA</div>:(
+          <table>
+            <thead><tr><th>MEMBER</th><th>TYPE</th><th>TOTAL FINES</th><th>PAID</th><th>UNPAID</th></tr></thead>
+            <tbody>{finesByMember.map(m=>(
+              <tr key={m.id}><td>{m.name}</td><td>{m.memberType}</td>
+                <td style={{fontWeight:700}}>₹{m.totalFines}</td>
+                <td style={{color:'var(--success)'}}>₹{m.paidFines}</td>
+                <td style={{color:m.totalFines-m.paidFines>0?'#FF3860':'var(--success)'}}>₹{m.totalFines-m.paidFines}</td>
+              </tr>
+            ))}</tbody>
+          </table>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════════
+// MEMBER DASHBOARD
+// ═══════════════════════════════════════════════════════════════
+function MemberDashboard({currentUser,state,dispatch,addToast}){
+  const [page,setPage]=useState('home');
+  const navItems=[
+    {id:'home',icon:'🏠',label:'My Dashboard'},
+    {id:'search',icon:'🔍',label:'Search Books'},
+    {id:'loans',icon:'📖',label:'My Loans'},
+    {id:'reservations',icon:'🔖',label:'Reservations'},
+    {id:'fines',icon:'💳',label:'My Fines'},
+    {id:'profile',icon:'👤',label:'My Profile'},
+  ];
+  const pageComp={
+    home:<MemHome currentUser={currentUser} state={state}/>,
+    search:<MemSearch currentUser={currentUser} state={state} dispatch={dispatch} addToast={addToast}/>,
+    loans:<MemLoans currentUser={currentUser} state={state}/>,
+    reservations:<MemReservations currentUser={currentUser} state={state} dispatch={dispatch} addToast={addToast}/>,
+    fines:<MemFines currentUser={currentUser} state={state} dispatch={dispatch} addToast={addToast}/>,
+    profile:<MemProfile currentUser={currentUser} state={state} dispatch={dispatch} addToast={addToast}/>,
+  };
+  return(
+    <div style={{display:'flex',flex:1,overflow:'hidden'}}>
+      <nav className="sidebar">
+        <div className="sidebar-logo">
+          <p className="font-orbitron" style={{fontSize:'0.65rem',color:'var(--cyan)',letterSpacing:2,opacity:0.7}}>MEMBER PANEL</p>
+        </div>
+        {navItems.map(n=>(
+          <div key={n.id} className={`nav-item ${page===n.id?'nav-active':''}`} onClick={()=>setPage(n.id)}>
+            <span className="nav-icon">{n.icon}</span>
+            <span className="nav-label" style={{fontFamily:'Rajdhani',fontWeight:600}}>{n.label}</span>
+          </div>
+        ))}
+      </nav>
+      <div className="main-area" style={{flex:1,overflowY:'auto',padding:'24px'}}>
+        <div className="page-fade" key={page}>{pageComp[page]}</div>
+      </div>
+      <div className="bottom-bar">
+        {navItems.map(n=>(
+          <div key={n.id} onClick={()=>setPage(n.id)} style={{display:'flex',flexDirection:'column',alignItems:'center',gap:3,cursor:'pointer',padding:'4px 8px',opacity:page===n.id?1:0.5}}>
+            <span style={{fontSize:'1.1rem'}}>{n.icon}</span>
+            <span style={{fontSize:'0.55rem',fontFamily:'Orbitron',color:page===n.id?'var(--cyan)':'var(--text)',letterSpacing:0.5}}>{n.label.split(' ').pop()}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function MemHome({currentUser,state}){
+  const myLoans=state.loans.filter(l=>l.memberId===currentUser.id&&l.status==='active');
+  const myFines=state.fines.filter(f=>f.memberId===currentUser.id&&!f.paid).reduce((a,b)=>a+b.amount,0);
+  const canBorrow=currentUser.maxBooks-myLoans.length;
+  return(
+    <div>
+      <div className="glass" style={{padding:24,marginBottom:24,cursor:'default'}}>
+        <div style={{display:'flex',alignItems:'center',gap:16,flexWrap:'wrap'}}>
+          <div style={{width:60,height:60,borderRadius:'50%',background:'linear-gradient(135deg,var(--cyan),var(--purple))',display:'flex',alignItems:'center',justifyContent:'center',fontSize:'1.8rem',boxShadow:'0 0 20px rgba(0,255,255,0.4)'}}>
+            {currentUser.name.charAt(0)}
+          </div>
+          <div>
+            <h2 className="font-orbitron" style={{fontSize:'1.1rem',color:'var(--cyan)',letterSpacing:2}}>WELCOME BACK, {currentUser.name.split(' ')[0].toUpperCase()}</h2>
+            <p style={{fontFamily:'Rajdhani',color:'rgba(0,255,255,0.5)',fontSize:'0.85rem',letterSpacing:1}}>
+              {currentUser.membershipId} • {currentUser.memberType} Member
+            </p>
+          </div>
+        </div>
+      </div>
+      <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(180px,1fr))',gap:16}}>
+        <StatCard icon="📖" label="BOOKS BORROWED" value={myLoans.length} color="var(--cyan)"/>
+        <StatCard icon="✅" label="CAN BORROW" value={canBorrow} color="var(--success)"/>
+        <StatCard icon="💳" label="PENDING FINES (₹)" value={myFines} color={myFines>0?'var(--orange)':'var(--success)'} pulse={myFines>0}/>
+      </div>
+    </div>
+  );
+}
+
+function MemSearch({currentUser,state,dispatch,addToast}){
+  const [search,setSearch]=useState('');
+  const filtered=state.books.filter(b=>
+    b.title.toLowerCase().includes(search.toLowerCase())||
+    b.author.toLowerCase().includes(search.toLowerCase())||
+    b.category.toLowerCase().includes(search.toLowerCase())
+  );
+  const myActiveLoans=state.loans.filter(l=>l.memberId===currentUser.id&&l.status==='active');
+  const handleReserve=(book)=>{
+    if(!state.settings.enableReservations){addToast('Reservations are currently disabled','error');return}
+    const existing=state.reservations.find(r=>r.memberId===currentUser.id&&r.bookIsbn===book.isbn&&r.status==='pending');
+    if(existing){addToast('You already have a reservation for this book','warning');return}
+    dispatch({type:'ADD_RESERVATION',payload:{memberId:currentUser.id,memberName:currentUser.name,bookIsbn:book.isbn,bookTitle:book.title,reservationDate:today()}});
+    addToast(`Reserved "${book.title}"`,'success');
+  };
+  const handleRequestIssue=(book)=>{
+    const memberLoans=myActiveLoans.length;
+    if(memberLoans>=currentUser.maxBooks){addToast(`Borrow limit reached (${currentUser.maxBooks} books max)`,'error');return}
+    const alreadyBorrowed=myActiveLoans.find(l=>l.bookIsbn===book.isbn);
+    if(alreadyBorrowed){addToast('You already have this book borrowed','warning');return}
+    dispatch({type:'ISSUE_BOOK',payload:{memberId:currentUser.id,bookIsbn:book.isbn,issueDate:today(),dueDate:addDays(today(),15),memberName:currentUser.name,bookTitle:book.title}});
+    addToast(`"${book.title}" issued to you! Due: ${formatDate(addDays(today(),15))}`,'success');
+  };
+  return(
+    <div>
+      <h2 className="font-orbitron glow-cyan" style={{fontSize:'1rem',letterSpacing:3,color:'var(--cyan)',marginBottom:20}}>SEARCH BOOKS</h2>
+      <input className="input-field" value={search} onChange={e=>setSearch(e.target.value)} placeholder="🔍 Search by title, author, or category..." style={{marginBottom:24}}/>
+      {filtered.length===0?<div className="empty-state"><div className="empty-icon">🔍</div>NO BOOKS MATCH YOUR SEARCH</div>:(
+        <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(280px,1fr))',gap:16}}>
+          {filtered.map(b=>(
+            <div key={b.isbn} className="glass" style={{padding:20,cursor:'default'}}>
+              <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',marginBottom:10}}>
+                <span className="badge badge-grey" style={{fontSize:'0.65rem'}}>{b.category}</span>
+                <span className={`badge ${b.availableCopies>0?'badge-success':'badge-danger'}`}>{b.availableCopies>0?`${b.availableCopies} AVAIL`:'NONE'}</span>
+              </div>
+              <h3 style={{fontFamily:'Orbitron',fontSize:'0.85rem',color:'var(--cyan)',marginBottom:6,letterSpacing:1}}>{b.title}</h3>
+              <p style={{fontFamily:'Rajdhani',fontSize:'0.9rem',color:'rgba(224,247,250,0.7)',marginBottom:14}}>{b.author}</p>
+              <div style={{display:'flex',gap:8}}>
+                {b.availableCopies>0?(
+                  <button className="btn-sm" style={{flex:1}} onClick={()=>handleRequestIssue(b)}>BORROW</button>
+                ):(
+                  <button className="btn-warning" style={{flex:1}} onClick={()=>handleReserve(b)}>RESERVE</button>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function MemLoans({currentUser,state}){
+  const [search,setSearch]=useState('');
+  const myLoans=state.loans.filter(l=>l.memberId===currentUser.id);
+  const filtered=myLoans.filter(l=>l.bookTitle.toLowerCase().includes(search.toLowerCase()));
+  const {sorted,sort,SortIcon}=useSortedData(filtered,'issueDate');
+  return(
+    <div>
+      <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:20,flexWrap:'wrap',gap:12}}>
+        <h2 className="font-orbitron glow-cyan" style={{fontSize:'1rem',letterSpacing:3,color:'var(--cyan)'}}>MY LOANS</h2>
+        <input className="input-field" value={search} onChange={e=>setSearch(e.target.value)} placeholder="🔍 Search..." style={{width:220}}/>
+      </div>
+      <div className="glass-static" style={{overflowX:'auto'}}>
+        {sorted.length===0?<div className="empty-state"><div className="empty-icon">📖</div>NO LOANS YET</div>:(
+          <table>
+            <thead><tr>
+              {[['id','LOAN ID'],['bookTitle','BOOK'],['issueDate','ISSUED'],['dueDate','DUE']].map(([k,l])=>(
+                <th key={k} onClick={()=>sort(k)}>{l}<SortIcon k={k}/></th>
+              ))}
+              <th>STATUS</th><th>FINE</th>
+            </tr></thead>
+            <tbody>{sorted.map(l=>{
+              const today_=today();
+              const overdueDays=l.status==='active'?daysBetween(l.dueDate,today_):0;
+              const isOverdue=overdueDays>0&&l.status==='active';
+              const relatedFine=state.fines.find(f=>f.loanId===l.id);
+              return(
+                <tr key={l.id}>
+                  <td><span className="badge badge-info">{l.id}</span></td>
+                  <td style={{fontWeight:600}}>{l.bookTitle}</td>
+                  <td>{formatDate(l.issueDate)}</td>
+                  <td style={{color:isOverdue?'#FF3860':'var(--text)'}}>{formatDate(l.dueDate)}</td>
+                  <td>
+                    {l.status==='returned'?<span className="badge badge-grey">RETURNED</span>:
+                     isOverdue?<span className="badge badge-danger">OVERDUE</span>:
+                     <span className="badge badge-success">ACTIVE</span>}
+                  </td>
+                  <td style={{color:relatedFine?'#FF3860':'var(--success)',fontWeight:700}}>
+                    {relatedFine?`₹${relatedFine.amount}`:'₹0'}
+                  </td>
+                </tr>
+              );
+            })}</tbody>
+          </table>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function MemReservations({currentUser,state,dispatch,addToast}){
+  const [search,setSearch]=useState('');
+  const myRes=state.reservations.filter(r=>r.memberId===currentUser.id);
+  const filtered=myRes.filter(r=>r.bookTitle.toLowerCase().includes(search.toLowerCase()));
+  const {sorted,sort,SortIcon}=useSortedData(filtered,'reservationDate');
+  const cancel=(id)=>{dispatch({type:'CANCEL_RESERVATION',payload:id});addToast('Reservation cancelled','warning')};
+  return(
+    <div>
+      <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:20,flexWrap:'wrap',gap:12}}>
+        <h2 className="font-orbitron glow-cyan" style={{fontSize:'1rem',letterSpacing:3,color:'var(--cyan)'}}>MY RESERVATIONS</h2>
+        <input className="input-field" value={search} onChange={e=>setSearch(e.target.value)} placeholder="🔍 Search..." style={{width:220}}/>
+      </div>
+      <div className="glass-static" style={{overflowX:'auto'}}>
+        {sorted.length===0?<div className="empty-state"><div className="empty-icon">🔖</div>NO RESERVATIONS</div>:(
+          <table>
+            <thead><tr>
+              {[['id','RES ID'],['bookTitle','BOOK'],['reservationDate','DATE'],['status','STATUS']].map(([k,l])=>(
+                <th key={k} onClick={()=>sort(k)}>{l}<SortIcon k={k}/></th>
+              ))}
+              <th>ACTION</th>
+            </tr></thead>
+            <tbody>{sorted.map(r=>(
+              <tr key={r.id}>
+                <td><span className="badge badge-info">{r.id}</span></td>
+                <td style={{fontWeight:600}}>{r.bookTitle}</td>
+                <td>{formatDate(r.reservationDate)}</td>
+                <td><span className={`badge ${r.status==='pending'?'badge-warning':'badge-grey'}`}>{r.status.toUpperCase()}</span></td>
+                <td>
+                  {r.status==='pending'&&<button className="btn-danger" style={{fontSize:'0.75rem',padding:'4px 10px'}} onClick={()=>cancel(r.id)}>CANCEL</button>}
+                </td>
+              </tr>
+            ))}</tbody>
+          </table>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function MemFines({currentUser,state,dispatch,addToast}){
+  const [paidId,setPaidId]=useState(null);
+  const [search,setSearch]=useState('');
+  const myFines=state.fines.filter(f=>f.memberId===currentUser.id);
+  const filtered=myFines.filter(f=>String(f.id).toLowerCase().includes(search.toLowerCase())||f.bookTitle?.toLowerCase().includes(search.toLowerCase()));
+  const {sorted,sort,SortIcon}=useSortedData(filtered,'id');
+  const payFine=(id)=>{
+    setPaidId(id);
+    setTimeout(()=>{dispatch({type:'PAY_FINE',payload:id});addToast('Fine paid successfully! ✨','success');setPaidId(null)},800);
+  };
+  const unpaid=myFines.filter(f=>!f.paid).reduce((a,b)=>a+b.amount,0);
+  return(
+    <div>
+      <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:20,flexWrap:'wrap',gap:12}}>
+        <h2 className="font-orbitron glow-cyan" style={{fontSize:'1rem',letterSpacing:3,color:'var(--cyan)'}}>MY FINES</h2>
+        <input className="input-field" value={search} onChange={e=>setSearch(e.target.value)} placeholder="🔍 Search..." style={{width:220}}/>
+      </div>
+      {unpaid>0&&(
+        <div className="glass" style={{padding:16,marginBottom:20,cursor:'default',borderColor:'rgba(255,107,0,0.5)',boxShadow:'0 0 20px rgba(255,107,0,0.2)'}}>
+          <p style={{fontFamily:'Orbitron',fontSize:'0.85rem',color:'#FF6B00'}}>⚠️ TOTAL UNPAID: ₹{unpaid}</p>
+        </div>
+      )}
+      <div className="glass-static" style={{overflowX:'auto'}}>
+        {sorted.length===0?<div className="empty-state"><div className="empty-icon">✅</div>NO FINES — EXCELLENT RECORD!</div>:(
+          <table>
+            <thead><tr>
+              {[['id','FINE ID'],['bookTitle','BOOK'],['amount','AMOUNT'],['reason','REASON']].map(([k,l])=>(
+                <th key={k} onClick={()=>sort(k)}>{l}<SortIcon k={k}/></th>
+              ))}
+              <th>STATUS</th><th>ACTION</th>
+            </tr></thead>
+            <tbody>{sorted.map(f=>(
+              <tr key={f.id} style={paidId===f.id?{background:'rgba(0,255,136,0.1)',transition:'background 0.5s'}:{}}>
+                <td><span className="badge badge-warning">{f.id}</span></td>
+                <td style={{fontWeight:600}}>{f.bookTitle||'—'}</td>
+                <td style={{color:f.paid?'var(--success)':'#FF3860',fontWeight:700}}>₹{f.amount}</td>
+                <td>{f.reason||'Overdue'}</td>
+                <td><span className={`badge ${f.paid?'badge-success':'badge-danger'}`}>{f.paid?'PAID':'UNPAID'}</span></td>
+                <td>
+                  {!f.paid&&<button className="btn-success" onClick={()=>payFine(f.id)} style={{fontSize:'0.78rem'}}>PAY ₹{f.amount}</button>}
+                  {f.paid&&<span style={{color:'var(--success)',fontSize:'1.2rem'}}>✓</span>}
+                </td>
+              </tr>
+            ))}</tbody>
+          </table>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function MemProfile({currentUser,state,dispatch,addToast}){
+  const [editing,setEditing]=useState(false);
+  const [form,setForm]=useState({email:currentUser.email||'',password:''});
+  const [errors,setErrors]=useState({});
+  const save=()=>{
+    const e={};
+    if(!form.email.trim()||!form.email.includes('@'))e.email='Valid email required';
+    if(form.password&&form.password.length<4)e.password='Min 4 characters';
+    setErrors(e);if(Object.keys(e).length)return;
+    dispatch({type:'UPDATE_MEMBER_PROFILE',payload:{id:currentUser.id,email:form.email,password:form.password||currentUser.password}});
+    addToast('Profile updated successfully','success');setEditing(false);
+  };
+  const myLoans=state.loans.filter(l=>l.memberId===currentUser.id);
+  return(
+    <div>
+      <h2 className="font-orbitron glow-cyan" style={{fontSize:'1rem',letterSpacing:3,color:'var(--cyan)',marginBottom:24}}>MY PROFILE</h2>
+      <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(300px,1fr))',gap:20}}>
+        <div className="glass" style={{padding:24,cursor:'default'}}>
+          <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:20}}>
+            <p className="font-orbitron" style={{fontSize:'0.72rem',color:'var(--cyan)',letterSpacing:2}}>IDENTITY</p>
+            <button className="btn-sm" onClick={()=>setEditing(!editing)}>{editing?'CANCEL':'EDIT'}</button>
+          </div>
+          {[
+            ['Name',currentUser.name],
+            ['Username',currentUser.username],
+            ['Membership ID',currentUser.membershipId],
+            ['Type',currentUser.memberType],
+            ['Max Books',currentUser.maxBooks],
+          ].map(([k,v])=>(
+            <div key={k} style={{marginBottom:14,paddingBottom:14,borderBottom:'1px solid rgba(0,255,255,0.08)'}}>
+              <p style={{fontSize:'0.7rem',color:'rgba(0,255,255,0.5)',fontFamily:'Orbitron',letterSpacing:1,marginBottom:4}}>{k.toUpperCase()}</p>
+              <p style={{fontFamily:'Rajdhani',fontSize:'1rem',fontWeight:600}}>{v}</p>
+            </div>
+          ))}
+          {editing&&(
+            <div>
+              <div style={{marginBottom:14}}>
+                <label style={{display:'block',fontSize:'0.7rem',color:'rgba(0,255,255,0.6)',fontFamily:'Orbitron',letterSpacing:1,marginBottom:5}}>EMAIL</label>
+                <input className="input-field" value={form.email} onChange={e=>setForm(p=>({...p,email:e.target.value}))}/>
+                {errors.email&&<p className="field-error">{errors.email}</p>}
+              </div>
+              <div style={{marginBottom:16}}>
+                <label style={{display:'block',fontSize:'0.7rem',color:'rgba(0,255,255,0.6)',fontFamily:'Orbitron',letterSpacing:1,marginBottom:5}}>NEW PASSWORD (LEAVE BLANK TO KEEP)</label>
+                <input className="input-field" type="password" value={form.password} onChange={e=>setForm(p=>({...p,password:e.target.value}))}/>
+                {errors.password&&<p className="field-error">{errors.password}</p>}
+              </div>
+              <button className="btn-primary" style={{width:'100%'}} onClick={save}>SAVE CHANGES</button>
+            </div>
+          )}
+        </div>
+        <div className="glass" style={{padding:24,cursor:'default'}}>
+          <p className="font-orbitron" style={{fontSize:'0.72rem',color:'var(--cyan)',letterSpacing:2,marginBottom:20}}>STATISTICS</p>
+          {[
+            ['Total Borrowed',myLoans.length,'📚'],
+            ['Currently Active',myLoans.filter(l=>l.status==='active').length,'📖'],
+            ['Returned',myLoans.filter(l=>l.status==='returned').length,'✅'],
+            ['Total Fines',`₹${state.fines.filter(f=>f.memberId===currentUser.id).reduce((a,b)=>a+b.amount,0)}`,'💰'],
+          ].map(([k,v,i])=>(
+            <div key={k} style={{display:'flex',justifyContent:'space-between',alignItems:'center',padding:'12px 0',borderBottom:'1px solid rgba(0,255,255,0.08)'}}>
+              <div style={{display:'flex',alignItems:'center',gap:10}}>
+                <span>{i}</span>
+                <span style={{fontFamily:'Rajdhani',fontSize:'0.9rem',color:'rgba(224,247,250,0.7)'}}>{k}</span>
+              </div>
+              <span style={{fontFamily:'Orbitron',fontSize:'1rem',color:'var(--cyan)',fontWeight:700}}>{v}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════════
+// ADMIN DASHBOARD
+// ═══════════════════════════════════════════════════════════════
+function AdminDashboard({currentUser,state,dispatch,addToast}){
+  const [page,setPage]=useState('users');
+  const navItems=[
+    {id:'users',icon:'👤',label:'User Management'},
+    {id:'settings',icon:'⚙️',label:'System Settings'},
+    {id:'reports',icon:'📊',label:'Reports'},
+  ];
+  const pageComp={
+    users:<AdminUsers state={state} dispatch={dispatch} addToast={addToast}/>,
+    settings:<AdminSettings state={state} dispatch={dispatch} addToast={addToast}/>,
+    reports:<AdminReports state={state}/>,
+  };
+  return(
+    <div style={{display:'flex',flex:1,overflow:'hidden'}}>
+      <nav className="sidebar">
+        <div className="sidebar-logo">
+          <p className="font-orbitron" style={{fontSize:'0.65rem',color:'var(--cyan)',letterSpacing:2,opacity:0.7}}>ADMIN PANEL</p>
+        </div>
+        {navItems.map(n=>(
+          <div key={n.id} className={`nav-item ${page===n.id?'nav-active':''}`} onClick={()=>setPage(n.id)}>
+            <span className="nav-icon">{n.icon}</span>
+            <span className="nav-label" style={{fontFamily:'Rajdhani',fontWeight:600}}>{n.label}</span>
+          </div>
+        ))}
+      </nav>
+      <div className="main-area" style={{flex:1,overflowY:'auto',padding:'24px'}}>
+        <div className="page-fade" key={page}>{pageComp[page]}</div>
+      </div>
+      <div className="bottom-bar">
+        {navItems.map(n=>(
+          <div key={n.id} onClick={()=>setPage(n.id)} style={{display:'flex',flexDirection:'column',alignItems:'center',gap:3,cursor:'pointer',padding:'4px 8px',opacity:page===n.id?1:0.5}}>
+            <span style={{fontSize:'1.1rem'}}>{n.icon}</span>
+            <span style={{fontSize:'0.55rem',fontFamily:'Orbitron',color:page===n.id?'var(--cyan)':'var(--text)',letterSpacing:0.5}}>{n.label.split(' ')[0]}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function AdminUsers({state,dispatch,addToast}){
+  const [tab,setTab]=useState('librarians');
+  const [modal,setModal]=useState(false);
+  const [form,setForm]=useState({name:'',username:'',password:'',role:'librarian'});
+  const [errors,setErrors]=useState({});
+  const [search,setSearch]=useState('');
+  const allUsers=[...INITIAL_USERS,...state.members].filter(u=>u.role!=='admin');
+  const librarians=allUsers.filter(u=>u.role==='librarian');
+  const members_=state.members;
+  const list=tab==='librarians'?librarians:members_;
+  const filtered=list.filter(u=>u.name.toLowerCase().includes(search.toLowerCase())||u.username?.toLowerCase().includes(search.toLowerCase()));
+  const {sorted,sort,SortIcon}=useSortedData(filtered,'name');
+  const validate=()=>{
+    const e={};
+    if(!form.name.trim())e.name='Name required';
+    if(!form.username.trim())e.username='Username required';
+    if(allUsers.find(u=>u.username===form.username))e.username='Username taken';
+    if(!form.password||form.password.length<4)e.password='Min 4 characters';
+    setErrors(e);return Object.keys(e).length===0;
+  };
+  const handleCreate=()=>{
+    if(!validate())return;
+    if(form.role==='member'){
+      addToast('Use Librarian panel to register members','warning');return;
+    }
+    addToast(`Account created for ${form.name} (${form.role})`,'success');
+    setModal(false);
+  };
+  const handleDelete=(u)=>{
+    if(u.role==='librarian'&&INITIAL_USERS.find(x=>x.username===u.username)){addToast('Cannot delete default accounts','error');return}
+    dispatch({type:'DELETE_MEMBER',payload:u.id});addToast(`${u.name} account removed`,'success');
+  };
+  return(
+    <div>
+      <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:20,flexWrap:'wrap',gap:12}}>
+        <h2 className="font-orbitron glow-cyan" style={{fontSize:'1rem',letterSpacing:3,color:'var(--cyan)'}}>USER MANAGEMENT</h2>
+        <div style={{display:'flex',gap:10,alignItems:'center'}}>
+          <input className="input-field" value={search} onChange={e=>setSearch(e.target.value)} placeholder="🔍 Search users..." style={{width:200}}/>
+          <button className="btn-primary" onClick={()=>{setErrors({});setModal(true)}}>+ CREATE</button>
+        </div>
+      </div>
+      <div style={{display:'flex',gap:8,marginBottom:16}}>
+        {[['librarians','Librarians'],['members','Members']].map(([k,l])=>(
+          <button key={k} onClick={()=>setTab(k)} className={tab===k?'btn-primary':'btn-sm'} style={{letterSpacing:1}}>{l.toUpperCase()}</button>
+        ))}
+      </div>
+      <div className="glass-static" style={{overflowX:'auto'}}>
+        {sorted.length===0?<div className="empty-state"><div className="empty-icon">👤</div>NO USERS</div>:(
+          <table>
+            <thead><tr>
+              <th onClick={()=>sort('name')}>NAME <SortIcon k="name"/></th>
+              <th onClick={()=>sort('username')}>USERNAME <SortIcon k="username"/></th>
+              <th>ROLE</th>
+              {tab==='members'&&<><th>TYPE</th><th>MEMBERSHIP ID</th></>}
+              <th>ACTION</th>
+            </tr></thead>
+            <tbody>{sorted.map(u=>(
+              <tr key={u.id||u.username}>
+                <td style={{fontWeight:600}}>{u.name}</td>
+                <td style={{fontFamily:'Orbitron',fontSize:'0.75rem',color:'rgba(0,255,255,0.7)'}}>{u.username}</td>
+                <td><span className={`badge ${u.role==='librarian'?'badge-info':'badge-success'}`}>{u.role?.toUpperCase()}</span></td>
+                {tab==='members'&&<><td>{u.memberType}</td><td>{u.membershipId}</td></>}
+                <td>
+                  {!(INITIAL_USERS.find(x=>x.username===u.username))&&(
+                    <button className="btn-danger" style={{fontSize:'0.75rem',padding:'4px 10px'}} onClick={()=>handleDelete(u)}>DELETE</button>
+                  )}
+                </td>
+              </tr>
+            ))}</tbody>
+          </table>
+        )}
+      </div>
+      <Modal open={modal} onClose={()=>setModal(false)} title="CREATE ACCOUNT">
+        {[['name','FULL NAME','text'],['username','USERNAME','text'],['password','PASSWORD','password']].map(([k,l,t])=>(
+          <div key={k} style={{marginBottom:14}}>
+            <label style={{display:'block',fontSize:'0.7rem',color:'rgba(0,255,255,0.6)',fontFamily:'Orbitron',letterSpacing:1,marginBottom:5}}>{l}</label>
+            <input className="input-field" type={t} value={form[k]} onChange={e=>setForm(p=>({...p,[k]:e.target.value}))}/>
+            {errors[k]&&<p className="field-error">{errors[k]}</p>}
+          </div>
+        ))}
+        <div style={{marginBottom:20}}>
+          <label style={{display:'block',fontSize:'0.7rem',color:'rgba(0,255,255,0.6)',fontFamily:'Orbitron',letterSpacing:1,marginBottom:5}}>ROLE</label>
+          <select className="input-field" value={form.role} onChange={e=>setForm(p=>({...p,role:e.target.value}))}>
+            <option value="librarian">Librarian</option>
+          </select>
+        </div>
+        <button className="btn-primary" style={{width:'100%'}} onClick={handleCreate}>CREATE ACCOUNT</button>
+      </Modal>
+    </div>
+  );
+}
+
+function Toggle({value,onChange,label}){
+  return(
+    <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',padding:'16px 0',borderBottom:'1px solid rgba(0,255,255,0.08)'}}>
+      <span style={{fontFamily:'Rajdhani',fontSize:'1rem',fontWeight:600}}>{label}</span>
+      <div className={`toggle-track ${value?'on':''}`} onClick={()=>onChange(!value)}>
+        <div className="toggle-thumb"/>
+      </div>
+    </div>
+  );
+}
+
+function AdminSettings({state,dispatch,addToast}){
+  const s=state.settings;
+  const update=(k,v)=>{dispatch({type:'UPDATE_SETTING',payload:{[k]:v}});addToast('Setting updated','success')};
+  return(
+    <div>
+      <h2 className="font-orbitron glow-cyan" style={{fontSize:'1rem',letterSpacing:3,color:'var(--cyan)',marginBottom:24}}>SYSTEM SETTINGS</h2>
+      <div className="glass-static" style={{padding:28,maxWidth:500}}>
+        <Toggle value={s.enableReservations} onChange={v=>update('enableReservations',v)} label="Enable Reservations"/>
+        <Toggle value={s.enableFineAutoCalc} onChange={v=>update('enableFineAutoCalc',v)} label="Enable Fine Auto-Calculate"/>
+        <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',padding:'16px 0',borderBottom:'1px solid rgba(0,255,255,0.08)'}}>
+          <span style={{fontFamily:'Rajdhani',fontSize:'1rem',fontWeight:600}}>Max Books Per Member</span>
+          <input className="input-field" type="number" min="1" max="20" value={s.maxBooksDefault} onChange={e=>update('maxBooksDefault',parseInt(e.target.value))} style={{width:80}}/>
+        </div>
+        <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',padding:'16px 0'}}>
+          <span style={{fontFamily:'Rajdhani',fontSize:'1rem',fontWeight:600}}>Fine Rate Per Day (₹)</span>
+          <input className="input-field" type="number" min="1" max="50" value={s.fineRate} onChange={e=>update('fineRate',parseInt(e.target.value))} style={{width:80}}/>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function AdminReports({state}){
+  const totalBooks=state.books.reduce((a,b)=>a+b.totalCopies,0);
+  const availBooks=state.books.reduce((a,b)=>a+b.availableCopies,0);
+  const activeLoans=state.loans.filter(l=>l.status==='active').length;
+  const overdueLoans=state.loans.filter(l=>l.status==='active'&&new Date(l.dueDate)<new Date()).length;
+  const totalFines=state.fines.reduce((a,b)=>a+b.amount,0);
+  const paidFines=state.fines.filter(f=>f.paid).reduce((a,b)=>a+b.amount,0);
+  return(
+    <div>
+      <h2 className="font-orbitron glow-cyan" style={{fontSize:'1rem',letterSpacing:3,color:'var(--cyan)',marginBottom:24}}>SYSTEM REPORT</h2>
+      <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(160px,1fr))',gap:14,marginBottom:28}}>
+        <StatCard icon="📚" label="TOTAL BOOKS" value={totalBooks} color="var(--cyan)"/>
+        <StatCard icon="✅" label="AVAILABLE" value={availBooks} color="var(--success)"/>
+        <StatCard icon="📤" label="ACTIVE LOANS" value={activeLoans} color="var(--cyan)"/>
+        <StatCard icon="⚠️" label="OVERDUE" value={overdueLoans} color="var(--orange)" pulse/>
+        <StatCard icon="👥" label="MEMBERS" value={state.members.length} color="var(--purple)"/>
+        <StatCard icon="💰" label="TOTAL FINES (₹)" value={totalFines} color="var(--orange)"/>
+        <StatCard icon="✔️" label="PAID (₹)" value={paidFines} color="var(--success)"/>
+        <StatCard icon="❌" label="UNPAID (₹)" value={totalFines-paidFines} color="var(--danger)"/>
+      </div>
+      <div className="glass-static" style={{overflowX:'auto'}}>
+        <table>
+          <thead><tr><th>METRIC</th><th>VALUE</th></tr></thead>
+          <tbody>
+            {[
+              ['Total Book Titles',state.books.length],
+              ['Total Copies',totalBooks],
+              ['Available Copies',availBooks],
+              ['Checked Out Copies',totalBooks-availBooks],
+              ['Active Loans',activeLoans],
+              ['Overdue Loans',overdueLoans],
+              ['Total Reservations',state.reservations.length],
+              ['Pending Reservations',state.reservations.filter(r=>r.status==='pending').length],
+              ['Total Members',state.members.length],
+              ['Total Fines (₹)',totalFines],
+              ['Paid Fines (₹)',paidFines],
+              ['Unpaid Fines (₹)',totalFines-paidFines],
+            ].map(([k,v])=>(
+              <tr key={k}><td>{k}</td><td style={{fontFamily:'Orbitron',color:'var(--cyan)',fontWeight:700}}>{v}</td></tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════════
+// REDUCER
+// ═══════════════════════════════════════════════════════════════
+let loanCounter=1000,fineCounter=100,resCounter=100;
+function reducer(state,action){
+  switch(action.type){
+    case 'ADD_BOOK':return{...state,books:[...state.books,action.payload]};
+    case 'EDIT_BOOK':{
+      const b=action.payload;
+      const old=state.books.find(x=>x.isbn===b.isbn);
+      const diff=b.totalCopies-(old?.totalCopies||0);
+      return{...state,books:state.books.map(x=>x.isbn===b.isbn?{...x,...b,availableCopies:Math.max(0,x.availableCopies+diff)}:x)};
+    }
+    case 'DELETE_BOOK':return{...state,books:state.books.filter(b=>b.isbn!==action.payload)};
+    case 'ISSUE_BOOK':{
+      const p=action.payload;
+      loanCounter++;
+      const loan={id:`LN${loanCounter}`,memberId:p.memberId,bookIsbn:p.bookIsbn,issueDate:p.issueDate,dueDate:p.dueDate,status:'active',memberName:p.memberName,bookTitle:p.bookTitle};
+      return{...state,
+        books:state.books.map(b=>b.isbn===p.bookIsbn?{...b,availableCopies:Math.max(0,b.availableCopies-1)}:b),
+        loans:[...state.loans,loan],
+      };
+    }
+    case 'RETURN_BOOK':{
+      const{loanId,returnDate,fineAmount}=action.payload;
+      const loan=state.loans.find(l=>l.id===loanId);
+      let newFines=[...state.fines];
+      if(fineAmount>0){
+        fineCounter++;
+        newFines=[...newFines,{id:`FN${fineCounter}`,loanId,memberId:loan.memberId,bookTitle:loan.bookTitle,amount:fineAmount,paid:false,reason:'Overdue',date:returnDate}];
+      }
+      return{...state,
+        books:state.books.map(b=>b.isbn===loan.bookIsbn?{...b,availableCopies:b.availableCopies+1}:b),
+        loans:state.loans.map(l=>l.id===loanId?{...l,status:'returned',returnDate}:l),
+        fines:newFines,
+      };
+    }
+    case 'ADD_MEMBER':return{...state,members:[...state.members,action.payload]};
+    case 'DELETE_MEMBER':return{...state,members:state.members.filter(m=>m.id!==action.payload)};
+    case 'UPDATE_MEMBER_PROFILE':return{...state,members:state.members.map(m=>m.id===action.payload.id?{...m,...action.payload}:m)};
+    case 'ADD_RESERVATION':{
+      resCounter++;
+      const r={id:`RV${resCounter}`,memberId:action.payload.memberId,memberName:action.payload.memberName,bookIsbn:action.payload.bookIsbn,bookTitle:action.payload.bookTitle,reservationDate:action.payload.reservationDate,status:'pending'};
+      return{...state,reservations:[...state.reservations,r]};
+    }
+    case 'CANCEL_RESERVATION':return{...state,reservations:state.reservations.map(r=>r.id===action.payload?{...r,status:'cancelled'}:r)};
+    case 'PAY_FINE':return{...state,fines:state.fines.map(f=>f.id===action.payload?{...f,paid:true}:f)};
+    case 'UPDATE_SETTING':return{...state,settings:{...state.settings,...action.payload}};
+    default:return state;
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// APP ROOT
+// ═══════════════════════════════════════════════════════════════
+function App(){
+  const [currentUser,setCurrentUser]=useState(null);
+  const {toasts,addToast,removeToast}=useToast();
+  const [state,dispatch]=React.useReducer(reducer,{
+    books:INITIAL_BOOKS,
+    loans:[],
+    members:INITIAL_USERS.filter(u=>u.role==='member'),
+    reservations:[],
+    fines:[],
+    settings:{enableReservations:true,enableFineAutoCalc:true,maxBooksDefault:3,fineRate:2},
+  });
+  // Sync currentUser with state.members (for profile updates)
+  const syncedUser=useMemo(()=>{
+    if(!currentUser)return null;
+    if(currentUser.role==='member'){
+      const found=state.members.find(m=>m.id===currentUser.id);
+      return found||currentUser;
+    }
+    return currentUser;
+  },[currentUser,state.members]);
+  const handleLogin=(user)=>setCurrentUser(user);
+  const handleLogout=()=>setCurrentUser(null);
+  // Merge static non-member accounts with live members list
+  const allUsers=useMemo(()=>[
+    ...INITIAL_USERS.filter(u=>u.role!=='member'),
+    ...state.members,
+  ],[state.members]);
+  return(
+    <>
+      <StarCanvas/>
+      <ToastContainer toasts={toasts} removeToast={removeToast}/>
+      <div className="app-layer">
+        {!currentUser?(
+          <LoginScreen onLogin={handleLogin} allUsers={allUsers}/>
+        ):(
+          <>
+            <Header user={syncedUser} onLogout={handleLogout}/>
+            <div style={{display:'flex',flex:1,overflow:'hidden'}}>
+              {syncedUser.role==='librarian'&&<LibrarianDashboard currentUser={syncedUser} state={state} dispatch={dispatch} addToast={addToast}/>}
+              {syncedUser.role==='member'&&<MemberDashboard currentUser={syncedUser} state={state} dispatch={dispatch} addToast={addToast}/>}
+              {syncedUser.role==='admin'&&<AdminDashboard currentUser={syncedUser} state={state} dispatch={dispatch} addToast={addToast}/>}
+            </div>
+          </>
+        )}
+      </div>
+      {currentUser&&(
+        <div style={{position:'fixed',bottom:14,left:18,color:'rgba(0,255,255,0.4)',fontSize:'0.7rem',fontFamily:'Orbitron',letterSpacing:1,zIndex:999}}>
+          ★ 300 PARTICLES
+        </div>
+      )}
+    </>
+  );
+}
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>
