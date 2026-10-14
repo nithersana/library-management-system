@@ -3,28 +3,29 @@ package com.library.catalog;
 import com.library.model.Book;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 
 /**
- * Thread-safe Singleton managing the central library book collection.
+ * Singleton design pattern managing the library book collection.
+ * Maintains a thread-safe private List<Book> per architectural specification.
  */
 public class Catalog {
-    // Volatile instance for double-checked locking pattern
+    // Volatile instance for double-checked locking thread-safety
     private static volatile Catalog instance;
 
-    // In-memory thread-safe storage keyed by ISBN
-    private final Map<String, Book> booksByIsbn;
+    // Strictly private List<Book> per specification
+    private final List<Book> books;
 
-    // Private constructor preventing direct instantiation
+    // Private constructor preventing external instantiation
     private Catalog() {
-        this.booksByIsbn = new ConcurrentHashMap<>();
+        this.books = new CopyOnWriteArrayList<>();
     }
 
     /**
-     * Returns the global Singleton instance of the Catalog.
+     * Global access point for the Catalog Singleton instance.
      */
     public static Catalog getInstance() {
         if (instance == null) {
@@ -38,62 +39,87 @@ public class Catalog {
     }
 
     /**
-     * Adds a new book or increments copies of an existing title.
+     * Adds a Book to the catalog collection, or increments copies if already present.
+     *
+     * @param book Book entity to add
      */
-    public void addBook(Book book) {
+    public synchronized void addBook(Book book) {
         if (book == null || book.getIsbn() == null) {
-            throw new IllegalArgumentException("Book and ISBN cannot be null");
+            throw new IllegalArgumentException("Book entity and ISBN cannot be null");
         }
-        if (booksByIsbn.containsKey(book.getIsbn())) {
-            Book existing = booksByIsbn.get(book.getIsbn());
-            existing.addCopy(book.getTotalCopies());
-            System.out.println("[CATALOG] Incremented copies for existing title: " + existing.getTitle());
-        } else {
-            booksByIsbn.put(book.getIsbn(), book);
-            System.out.println("[CATALOG] Registered new book: \"" + book.getTitle() + "\" [ISBN: " + book.getIsbn() + "]");
+
+        // Search for existing title in List<Book>
+        for (Book existing : books) {
+            if (existing.getIsbn().equalsIgnoreCase(book.getIsbn())) {
+                existing.addCopy(book.getTotalCopies());
+                System.out.println("[CATALOG] Incremented copies for existing title: \"" + existing.getTitle() + "\" [Total: " + existing.getTotalCopies() + "]");
+                return;
+            }
         }
+
+        // Add new book to the List<Book>
+        books.add(book);
+        System.out.println("[CATALOG] Registered new title: \"" + book.getTitle() + "\" [ISBN: " + book.getIsbn() + ", Copies: " + book.getTotalCopies() + "]");
     }
 
     /**
-     * Removes a book completely from catalog by ISBN.
+     * Removes a Book from the catalog by ISBN.
+     *
+     * @param isbn Unique ISBN identifier
+     * @return true if removed, false otherwise
      */
-    public boolean removeBook(String isbn) {
-        if (isbn != null && booksByIsbn.containsKey(isbn)) {
-            Book removed = booksByIsbn.remove(isbn);
-            System.out.println("[CATALOG] Removed book: \"" + removed.getTitle() + "\" from catalog.");
-            return true;
+    public synchronized boolean removeBook(String isbn) {
+        if (isbn == null) return false;
+        for (Book b : books) {
+            if (b.getIsbn().equalsIgnoreCase(isbn)) {
+                books.remove(b);
+                System.out.println("[CATALOG] Removed book: \"" + b.getTitle() + "\" from catalog.");
+                return true;
+            }
         }
         return false;
     }
 
     /**
-     * Searches books across ISBN, Title, Author, or Category (case-insensitive).
+     * Searches books by title, author, category, or ISBN (case-insensitive).
+     *
+     * @param query Search query keyword
+     * @return List of matching Book entities
      */
     public List<Book> searchBook(String query) {
         if (query == null || query.trim().isEmpty()) {
-            return new ArrayList<>(booksByIsbn.values());
+            return new ArrayList<>(books);
         }
-        String lowerQuery = query.trim().toLowerCase();
-        return booksByIsbn.values().stream()
-                .filter(b -> b.getIsbn().toLowerCase().contains(lowerQuery)
-                        || b.getTitle().toLowerCase().contains(lowerQuery)
-                        || b.getAuthor().toLowerCase().contains(lowerQuery)
-                        || b.getCategory().toLowerCase().contains(lowerQuery))
+        String q = query.trim().toLowerCase();
+        return books.stream()
+                .filter(b -> b.getIsbn().toLowerCase().contains(q)
+                        || b.getTitle().toLowerCase().contains(q)
+                        || b.getAuthor().toLowerCase().contains(q)
+                        || b.getCategory().toLowerCase().contains(q))
                 .collect(Collectors.toList());
     }
 
     /**
-     * Direct lookup by exact ISBN.
+     * Helper lookup to find a specific book by exact ISBN.
      */
     public Book findBookByIsbn(String isbn) {
-        return isbn != null ? booksByIsbn.get(isbn) : null;
+        if (isbn == null) return null;
+        for (Book b : books) {
+            if (b.getIsbn().equalsIgnoreCase(isbn)) {
+                return b;
+            }
+        }
+        return null;
     }
 
+    /**
+     * Returns an unmodifiable view of all books in the catalog.
+     */
     public List<Book> getAllBooks() {
-        return new ArrayList<>(booksByIsbn.values());
+        return Collections.unmodifiableList(books);
     }
 
-    public int getTotalDistinctTitles() {
-        return booksByIsbn.size();
+    public int getTotalBooksCount() {
+        return books.size();
     }
 }

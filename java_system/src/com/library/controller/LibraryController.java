@@ -1,6 +1,7 @@
 package com.library.controller;
 
 import com.library.catalog.Catalog;
+import com.library.exception.BookNotFoundException;
 import com.library.exception.BookUnavailableException;
 import com.library.exception.BorrowingLimitExceededException;
 import com.library.model.Book;
@@ -18,8 +19,10 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * Controller orchestrator class coordinating borrowing transactions, limit verification,
- * inventory copy adjustments, and strategy-based fine assessments.
+ * Controller class orchestrating business workflows:
+ * - Issue book with quota enforcement & copy availability check
+ * - Return book with strategy-based fine assessment
+ * - Full exception handling and inventory tracking
  */
 public class LibraryController {
     private static final int DEFAULT_LOAN_PERIOD_DAYS = 14;
@@ -48,19 +51,20 @@ public class LibraryController {
      * @param issueDate    Date of checkout
      * @return Created Loan instance
      * @throws BorrowingLimitExceededException when member already holds max allowed books
-     * @throws BookUnavailableException        when book is not in catalog or has 0 available copies
+     * @throws BookNotFoundException           when book is not in the catalog
+     * @throws BookUnavailableException        when book has 0 available copies
      */
     public synchronized Loan issueBook(Member member, String isbn, FineStrategy fineStrategy, LocalDate issueDate)
-            throws BorrowingLimitExceededException, BookUnavailableException {
+            throws BorrowingLimitExceededException, BookNotFoundException, BookUnavailableException {
 
         if (member == null) {
             throw new IllegalArgumentException("Borrowing member cannot be null");
         }
 
-        // 1. Enforce Member Borrowing Limit Check
+        // 1. Enforce Member Borrowing Limit Check (Default 3)
         if (member.getActiveLoans().size() >= member.getMaxBooksAllowed()) {
             throw new BorrowingLimitExceededException(String.format(
-                    "Borrowing limit exceeded for member '%s' (ID: %s). Currently holding %d of %d maximum allowed books.",
+                    "Borrowing limit exceeded for member '%s' (ID: %s). Holding %d of %d maximum allowed books.",
                     member.getName(), member.getMembershipId(), member.getActiveLoans().size(), member.getMaxBooksAllowed()
             ));
         }
@@ -68,7 +72,7 @@ public class LibraryController {
         // 2. Locate Book in Central Catalog
         Book book = Catalog.getInstance().findBookByIsbn(isbn);
         if (book == null) {
-            throw new BookUnavailableException("Book with ISBN " + isbn + " does not exist in library catalog.");
+            throw new BookNotFoundException("Book with ISBN '" + isbn + "' was not found in library catalog.");
         }
 
         // 3. Enforce Book Availability Check
@@ -107,12 +111,12 @@ public class LibraryController {
      * Overload for issueBook using current system date.
      */
     public Loan issueBook(Member member, String isbn, FineStrategy fineStrategy)
-            throws BorrowingLimitExceededException, BookUnavailableException {
+            throws BorrowingLimitExceededException, BookNotFoundException, BookUnavailableException {
         return issueBook(member, isbn, fineStrategy, LocalDate.now());
     }
 
     /**
-     * Processes book return, recalculates copy availability, and computes fines via strategy.
+     * Processes book return, increments copy availability, and computes fines via strategy.
      *
      * @param loanId     Unique loan transaction ID
      * @param returnDate Actual date of physical return
@@ -169,5 +173,9 @@ public class LibraryController {
 
     public List<Fine> getAssessedFines() {
         return Collections.unmodifiableList(assessedFines);
+    }
+
+    public List<Loan> getAllLoansHistory() {
+        return Collections.unmodifiableList(allLoansHistory);
     }
 }

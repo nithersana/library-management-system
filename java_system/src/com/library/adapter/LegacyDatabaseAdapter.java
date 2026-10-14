@@ -3,49 +3,43 @@ package com.library.adapter;
 import com.library.model.Book;
 
 /**
- * Adapter class implementing BookSource to bridge the modern Book domain model
- * with the obsolete OldLibraryDatabase string-based records.
+ * Adapter pattern implementation:
+ * Bridges the modern BookSource interface with the legacy OldLibraryDatabase returning raw String[].
  */
 public class LegacyDatabaseAdapter implements BookSource {
     private final OldLibraryDatabase legacyDatabase;
 
     public LegacyDatabaseAdapter(OldLibraryDatabase legacyDatabase) {
         if (legacyDatabase == null) {
-            throw new IllegalArgumentException("OldLibraryDatabase instance cannot be null");
+            throw new IllegalArgumentException("OldLibraryDatabase dependency cannot be null");
         }
         this.legacyDatabase = legacyDatabase;
     }
 
     @Override
     public Book getBook(String isbn) {
-        System.out.println("[ADAPTER] Translating request for ISBN " + isbn + " to legacy database format...");
-        String rawRecord = legacyDatabase.fetchLegacyRecord(isbn);
+        System.out.println("[ADAPTER] Adapting request for ISBN: " + isbn);
+        String[] rawRecord = legacyDatabase.fetchRawRecord(isbn);
 
-        if (rawRecord == null || rawRecord.trim().isEmpty()) {
-            System.err.println("[ADAPTER ERROR] No record found in legacy database for key: " + isbn);
+        if (rawRecord == null || rawRecord.length < 5) {
+            System.err.println("[ADAPTER ERROR] Missing or corrupted legacy record for ISBN: " + isbn);
             return null;
         }
 
-        // Parse legacy format: "BARCODE#TITLE#AUTHOR#GENRE#STOCK"
-        String[] tokens = rawRecord.split("#");
-        if (tokens.length < 5) {
-            System.err.println("[ADAPTER ERROR] Corrupted legacy format: " + rawRecord);
-            return null;
-        }
-
-        String legacyIsbn = tokens[0].trim();
-        String title = tokens[1].trim();
-        String author = tokens[2].trim();
-        String category = tokens[3].trim();
-        int stock = 1;
+        // Map String[] elements to modern Book entity
+        String legacyIsbn = rawRecord[0];
+        String title = rawRecord[1];
+        String author = rawRecord[2];
+        String category = rawRecord[3];
+        int copies = 1;
         try {
-            stock = Integer.parseInt(tokens[4].trim());
+            copies = Integer.parseInt(rawRecord[4]);
         } catch (NumberFormatException e) {
-            System.err.println("[ADAPTER WARNING] Invalid stock value in legacy record. Defaulting to 1.");
+            System.err.println("[ADAPTER WARNING] Non-integer copy count: " + rawRecord[4] + ". Defaulting to 1.");
         }
 
-        Book adaptedBook = new Book(legacyIsbn, title, author, category, stock);
-        System.out.println("[ADAPTER SUCCESS] Adapted legacy record into modern Book: " + adaptedBook);
+        Book adaptedBook = new Book(legacyIsbn, title, author, category, copies);
+        System.out.println("[ADAPTER] Successfully adapted raw String[] into modern Book: " + adaptedBook);
         return adaptedBook;
     }
 }

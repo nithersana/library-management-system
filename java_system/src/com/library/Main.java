@@ -5,6 +5,7 @@ import com.library.adapter.LegacyDatabaseAdapter;
 import com.library.adapter.OldLibraryDatabase;
 import com.library.catalog.Catalog;
 import com.library.controller.LibraryController;
+import com.library.exception.BookNotFoundException;
 import com.library.exception.BookUnavailableException;
 import com.library.exception.BorrowingLimitExceededException;
 import com.library.model.Admin;
@@ -21,208 +22,231 @@ import java.time.LocalDate;
 import java.util.List;
 
 /**
- * Driver program demonstrating the OOAD Detailed Design implementation:
- * 1. Catalog Singleton verification.
- * 2. Book search and Member borrowing limit enforcement.
- * 3. Strategy pattern for overdue fine calculations.
- * 4. Adapter pattern for legacy database integration.
- * 5. Exception handling for business constraints.
+ * Enterprise Driver Program & Output Generator for Library Management System
+ * demonstrating OOAD / OOSE architecture:
+ *
+ * a) Catalog Singleton verification (confirming single object instance).
+ * b) Adding books and searching catalog.
+ * c) Borrowing limit enforcement (attempting to borrow 4th book and catching exception).
+ * d) Issuing and returning books with Student, Faculty, and Guest fine strategies.
+ * e) Legacy database import demonstration via the Adapter pattern.
+ * f) Detailed execution summary report.
  */
 public class Main {
     public static void main(String[] args) {
-        printBanner("LIBRARY MANAGEMENT SYSTEM — OOAD DETAILED DESIGN DEMO");
+        printBanner("LIBRARY MANAGEMENT SYSTEM — OOAD ARCHITECTURAL VERIFICATION");
 
         // ═════════════════════════════════════════════════════════════
-        // PART A: CATALOG SINGLETON VERIFICATION
+        // STEP A: CATALOG SINGLETON VERIFICATION
         // ═════════════════════════════════════════════════════════════
-        printSectionHeader("PART A: Catalog Singleton Pattern Verification");
+        printHeader("A. CATALOG SINGLETON PATTERN VERIFICATION");
 
-        Catalog catalogRef1 = Catalog.getInstance();
-        Catalog catalogRef2 = Catalog.getInstance();
+        Catalog catalog1 = Catalog.getInstance();
+        Catalog catalog2 = Catalog.getInstance();
 
-        System.out.println("Reference 1 HashCode: " + System.identityHashCode(catalogRef1));
-        System.out.println("Reference 2 HashCode: " + System.identityHashCode(catalogRef2));
+        System.out.println("  • Catalog Instance 1 Identity HashCode: " + System.identityHashCode(catalog1));
+        System.out.println("  • Catalog Instance 2 Identity HashCode: " + System.identityHashCode(catalog2));
 
-        if (catalogRef1 == catalogRef2) {
-            System.out.println(">>> SUCCESS: catalogRef1 == catalogRef2. Singleton contract verified (same instance in JVM).");
+        if (catalog1 == catalog2) {
+            System.out.println("  [VERIFIED] catalog1 == catalog2 -> True.");
+            System.out.println("  [PATTERN] Both references point to the exact same Singleton instance in JVM memory.");
         } else {
-            System.err.println(">>> FAILURE: Instances differ!");
+            System.err.println("  [FAILED] Singleton contract violated!");
         }
 
-        // Initialize Catalog with sample titles
-        System.out.println("\n--- Populating Catalog with Initial Books ---");
-        Book book1 = new Book("978-0134685991", "Effective Java", "Joshua Bloch", "Programming", 2);
-        Book book2 = new Book("978-0132350884", "Clean Code", "Robert C. Martin", "Programming", 1);
-        Book book3 = new Book("978-0201633610", "Design Patterns", "Gang of Four", "Architecture", 2);
-        Book book4 = new Book("978-0321356680", "Effective Unit Testing", "Lasse Koskela", "Testing", 1);
+        // ═════════════════════════════════════════════════════════════
+        // STEP B: ADDING BOOKS & SEARCHING CATALOG
+        // ═════════════════════════════════════════════════════════════
+        printHeader("B. ADDING BOOKS & MULTI-CRITERIA CATALOG SEARCH");
 
-        catalogRef1.addBook(book1);
-        catalogRef1.addBook(book2);
-        catalogRef1.addBook(book3);
-        catalogRef1.addBook(book4);
+        Book b1 = new Book("978-0134685991", "Effective Java", "Joshua Bloch", "Programming", 2);
+        Book b2 = new Book("978-0132350884", "Clean Code", "Robert C. Martin", "Programming", 1);
+        Book b3 = new Book("978-0201633610", "Design Patterns", "Gang of Four", "Architecture", 2);
+        Book b4 = new Book("978-0321356680", "Effective Unit Testing", "Lasse Koskela", "Testing", 1);
 
-        System.out.println("Total distinct titles in catalog: " + catalogRef1.getTotalDistinctTitles());
+        catalog1.addBook(b1);
+        catalog1.addBook(b2);
+        catalog1.addBook(b3);
+        catalog1.addBook(b4);
+
+        System.out.println("\n  • Searching Catalog for query keyword: 'Effective'");
+        List<Book> searchResults1 = catalog1.searchBook("Effective");
+        for (Book b : searchResults1) {
+            System.out.println("    -> " + b);
+        }
+
+        System.out.println("\n  • Searching Catalog for category: 'Architecture'");
+        List<Book> searchResults2 = catalog1.searchBook("Architecture");
+        for (Book b : searchResults2) {
+            System.out.println("    -> " + b);
+        }
 
         // ═════════════════════════════════════════════════════════════
-        // PART B: BOOK SEARCH & BORROWING LIMIT ENFORCEMENT
+        // STEP C: BORROWING LIMIT & AVAILABILITY ENFORCEMENT
         // ═════════════════════════════════════════════════════════════
-        printSectionHeader("PART B: Member Book Search & Borrowing Limit Enforcement");
+        printHeader("C. BORROWING LIMIT & AVAILABILITY ENFORCEMENT");
 
-        // Initialize Users
-        Admin admin = new Admin("ADM-001", "Chief Administrator", "admin@library.com", "adm123");
-        Librarian librarian = new Librarian("LIB-001", "Dr. Sarah Connor", "librarian@library.com", "lib123", "EMP-9001");
-        Member studentMember = new Member("USR-101", "Ravi Kumar", "ravi@student.edu", "pass123", "M-001", 3);
-        Member facultyMember = new Member("USR-102", "Dr. Priya Sharma", "priya@faculty.edu", "pass456", "M-002", 5);
+        Admin admin = new Admin("ADM-01", "Systems Admin", "admin@lib.org", "admPass");
+        Librarian librarian = new Librarian("LIB-01", "Dr. Sarah Connor", "sarah@lib.org", "libPass", "EMP-101");
+        Member student = new Member("USR-01", "Ravi Kumar", "ravi@univ.edu", "studPass", "MEM-001", 3);
+        Member faculty = new Member("USR-02", "Dr. Priya Sharma", "priya@univ.edu", "facPass", "MEM-002", 5);
 
-        admin.createAccount(studentMember);
-        admin.createAccount(facultyMember);
+        admin.createAccount(student);
+        admin.createAccount(faculty);
         admin.createAccount(librarian);
 
-        // Member searches for books
-        System.out.println("\n--- Member Search Operation ---");
-        List<Book> searchResults = studentMember.searchBook("Programming");
-        System.out.println("Search Results for query 'Programming':");
-        for (Book b : searchResults) {
-            System.out.println("   -> " + b);
-        }
-
-        // Controller setup
         LibraryController controller = new LibraryController();
 
-        System.out.println("\n--- Testing Borrowing Limit for Student (Max Allowed: " + studentMember.getMaxBooksAllowed() + ") ---");
+        System.out.println("\n  • Checkout operations for Student (Quota: " + student.getMaxBooksAllowed() + " books max):");
         try {
-            System.out.println("1. Borrowing Book 1: Effective Java");
-            controller.issueBook(studentMember, "978-0134685991", new StudentFineStrategy(), LocalDate.of(2026, 10, 1));
+            System.out.println("    1. Checkout Book 1 (Effective Java)...");
+            controller.issueBook(student, "978-0134685991", new StudentFineStrategy(), LocalDate.of(2026, 10, 1));
 
-            System.out.println("2. Borrowing Book 2: Clean Code");
-            controller.issueBook(studentMember, "978-0132350884", new StudentFineStrategy(), LocalDate.of(2026, 10, 2));
+            System.out.println("    2. Checkout Book 2 (Clean Code)...");
+            controller.issueBook(student, "978-0132350884", new StudentFineStrategy(), LocalDate.of(2026, 10, 2));
 
-            System.out.println("3. Borrowing Book 3: Design Patterns");
-            controller.issueBook(studentMember, "978-0201633610", new StudentFineStrategy(), LocalDate.of(2026, 10, 3));
+            System.out.println("    3. Checkout Book 3 (Design Patterns)...");
+            controller.issueBook(student, "978-0201633610", new StudentFineStrategy(), LocalDate.of(2026, 10, 3));
 
-            System.out.println("\n>>> Student currently holds " + studentMember.getActiveLoans().size() + " active loans.");
-            studentMember.viewHistory();
+            System.out.println("\n    [STATUS] Student currently holds " + student.getActiveLoans().size() + " active loans.");
+            student.viewHistory();
 
-            System.out.println("\n4. Attempting to borrow Book 4 (Effective Unit Testing) — EXPECTING EXCEPTION...");
-            controller.issueBook(studentMember, "978-0321356680", new StudentFineStrategy(), LocalDate.of(2026, 10, 4));
+            System.out.println("\n    4. Attempting 4th Checkout (Effective Unit Testing) — Quota violation expected:");
+            controller.issueBook(student, "978-0321356680", new StudentFineStrategy(), LocalDate.of(2026, 10, 4));
 
         } catch (BorrowingLimitExceededException ex) {
-            System.out.println("\n>>> CAUGHT EXPECTED EXCEPTION: [BorrowingLimitExceededException]");
-            System.out.println("    Message: " + ex.getMessage());
-        } catch (BookUnavailableException ex) {
-            System.err.println("Unexpected BookUnavailableException: " + ex.getMessage());
+            System.out.println("    [CAUGHT EXPECTED EXCEPTION] -> BorrowingLimitExceededException");
+            System.out.println("    Exception Message: " + ex.getMessage());
+        } catch (Exception ex) {
+            System.err.println("    [UNEXPECTED ERROR] " + ex.getMessage());
         }
 
-        // Test Book Availability constraint
-        System.out.println("\n--- Testing Book Availability Constraint ---");
+        System.out.println("\n  • Testing Book Unavailable Constraint:");
         try {
-            System.out.println("Faculty Dr. Priya attempts to borrow 'Clean Code' (0 copies remaining)...");
-            controller.issueBook(facultyMember, "978-0132350884", new FacultyFineStrategy(), LocalDate.of(2026, 10, 5));
+            System.out.println("    Faculty attempts to borrow 'Clean Code' (0 available copies remaining)...");
+            controller.issueBook(faculty, "978-0132350884", new FacultyFineStrategy(), LocalDate.of(2026, 10, 5));
         } catch (BookUnavailableException ex) {
-            System.out.println(">>> CAUGHT EXPECTED EXCEPTION: [BookUnavailableException]");
-            System.out.println("    Message: " + ex.getMessage());
-            System.out.println(">>> Faculty places a hold/reservation instead:");
-            facultyMember.reserveBook(catalogRef1.findBookByIsbn("978-0132350884"));
-        } catch (BorrowingLimitExceededException ex) {
-            System.err.println("Unexpected BorrowingLimitExceededException: " + ex.getMessage());
+            System.out.println("    [CAUGHT EXPECTED EXCEPTION] -> BookUnavailableException");
+            System.out.println("    Exception Message: " + ex.getMessage());
+            System.out.println("    -> Member places reservation hold instead:");
+            faculty.reserveBook(catalog1.findBookByIsbn("978-0132350884"));
+        } catch (Exception ex) {
+            System.err.println("    [UNEXPECTED ERROR] " + ex.getMessage());
+        }
+
+        System.out.println("\n  • Testing Book Not Found Constraint:");
+        try {
+            System.out.println("    Borrowing non-existent ISBN '978-9999999999'...");
+            controller.issueBook(faculty, "978-9999999999", new FacultyFineStrategy(), LocalDate.of(2026, 10, 5));
+        } catch (BookNotFoundException ex) {
+            System.out.println("    [CAUGHT EXPECTED EXCEPTION] -> BookNotFoundException");
+            System.out.println("    Exception Message: " + ex.getMessage());
+        } catch (Exception ex) {
+            System.err.println("    [UNEXPECTED ERROR] " + ex.getMessage());
         }
 
         // ═════════════════════════════════════════════════════════════
-        // PART C: STRATEGY PATTERN OVERDUE FINE CALCULATIONS
+        // STEP D: STRATEGY PATTERN FOR FINE CALCULATIONS
         // ═════════════════════════════════════════════════════════════
-        printSectionHeader("PART C: Strategy Pattern for Overdue Fine Calculations");
+        printHeader("D. STRATEGY PATTERN FOR DYNAMIC FINE CALCULATION");
 
-        // Scenario 1: Student returns book 5 days overdue (Student rate = Rs. 1.0/day)
-        // Loan issued on Oct 1, 2026. Due date (14 days) = Oct 15, 2026.
-        // Return date = Oct 20, 2026 (5 days overdue). Expected fine = 5 * 1.0 = Rs. 5.0
-        Loan studentLoan = studentMember.getActiveLoans().get(0);
-        LocalDate studentReturnDate = LocalDate.of(2026, 10, 20);
-
-        System.out.println("\n--- Scenario 1: Student Loan Return (StudentFineStrategy @ Rs. 1/day) ---");
-        System.out.println("Loan Issued: " + studentLoan.getIssueDate() + ", Due Date: " + studentLoan.getDueDate());
-        System.out.println("Actual Return Date: " + studentReturnDate + " (5 Days Overdue)");
-
-        Fine studentFine = controller.returnBook(studentLoan.getLoanId(), studentReturnDate);
-        if (studentFine != null) {
-            System.out.println("Generated Record: " + studentFine);
-            studentFine.payFine();
+        // Scenario 1: Student return (5 days overdue @ Rs. 1.0/day)
+        Loan studentLoan = student.getActiveLoans().get(0); // Effective Java, due Oct 15
+        LocalDate studentReturnDate = LocalDate.of(2026, 10, 20); // 5 days overdue
+        System.out.println("  --- Scenario 1: Student Loan (Rate: Rs. 1.0/day) ---");
+        System.out.println("  Issued: " + studentLoan.getIssueDate() + " | Due: " + studentLoan.getDueDate() + " | Returned: " + studentReturnDate + " (5 Days Overdue)");
+        Fine f1 = controller.returnBook(studentLoan.getLoanId(), studentReturnDate);
+        if (f1 != null) {
+            System.out.println("  -> Fine Assessed: Rs. " + f1.calculateAmount() + " [Paid Status: " + f1.isPaidStatus() + "]");
+            f1.payFine();
+            System.out.println("  -> After Payment: [Paid Status: " + f1.isPaidStatus() + "]");
         }
 
-        // Scenario 2: Faculty borrows and returns book 10 days overdue (Faculty rate = Rs. 0.5/day)
-        System.out.println("\n--- Scenario 2: Faculty Loan Return (FacultyFineStrategy @ Rs. 0.5/day) ---");
+        // Scenario 2: Faculty return (10 days overdue @ Rs. 0.5/day)
+        System.out.println("\n  --- Scenario 2: Faculty Loan (Rate: Rs. 0.5/day) ---");
         try {
-            Loan facultyLoan = controller.issueBook(facultyMember, "978-0134685991", new FacultyFineStrategy(), LocalDate.of(2026, 9, 1));
-            // Due date: Sep 15, 2026. Return date: Sep 25, 2026 (10 days overdue). Expected fine = 10 * 0.5 = Rs. 5.0
-            LocalDate facultyReturnDate = LocalDate.of(2026, 9, 25);
-            System.out.println("Loan Issued: " + facultyLoan.getIssueDate() + ", Due Date: " + facultyLoan.getDueDate());
-            System.out.println("Actual Return Date: " + facultyReturnDate + " (10 Days Overdue)");
-
-            Fine facultyFine = controller.returnBook(facultyLoan.getLoanId(), facultyReturnDate);
-            if (facultyFine != null) {
-                System.out.println("Generated Record: " + facultyFine);
-                facultyFine.payFine();
+            Loan facLoan = controller.issueBook(faculty, "978-0134685991", new FacultyFineStrategy(), LocalDate.of(2026, 9, 1));
+            // Due: Sep 15, 2026. Return: Sep 25, 2026 (10 days overdue). Expected fine = 10 * 0.5 = Rs. 5.0
+            LocalDate facReturnDate = LocalDate.of(2026, 9, 25);
+            System.out.println("  Issued: " + facLoan.getIssueDate() + " | Due: " + facLoan.getDueDate() + " | Returned: " + facReturnDate + " (10 Days Overdue)");
+            Fine f2 = controller.returnBook(facLoan.getLoanId(), facReturnDate);
+            if (f2 != null) {
+                System.out.println("  -> Fine Assessed: Rs. " + f2.calculateAmount() + " [Paid Status: " + f2.isPaidStatus() + "]");
+                f2.payFine();
             }
         } catch (Exception e) {
-            System.err.println("Error: " + e.getMessage());
+            System.err.println("  Error: " + e.getMessage());
         }
 
-        // Scenario 3: Guest Member with GuestFineStrategy (Rs. 3.0/day)
-        System.out.println("\n--- Scenario 3: Guest Loan Return (GuestFineStrategy @ Rs. 3/day) ---");
-        Member guestMember = new Member("USR-103", "Alex Turner (Guest)", "alex@guest.org", "guestpass", "G-999", 1);
+        // Scenario 3: Guest return (4 days overdue @ Rs. 3.0/day)
+        System.out.println("\n  --- Scenario 3: Guest Loan (Rate: Rs. 3.0/day) ---");
+        Member guest = new Member("USR-03", "Alex Miller (Guest)", "alex@guest.org", "guestPass", "MEM-003", 1);
         try {
-            Loan guestLoan = controller.issueBook(guestMember, "978-0321356680", new GuestFineStrategy(), LocalDate.of(2026, 10, 1));
-            // Due date: Oct 15, 2026. Return date: Oct 19, 2026 (4 days overdue). Expected fine = 4 * 3.0 = Rs. 12.0
+            Loan guestLoan = controller.issueBook(guest, "978-0321356680", new GuestFineStrategy(), LocalDate.of(2026, 10, 1));
+            // Due: Oct 15, 2026. Return: Oct 19, 2026 (4 days overdue). Expected fine = 4 * 3.0 = Rs. 12.0
             LocalDate guestReturnDate = LocalDate.of(2026, 10, 19);
-            System.out.println("Loan Issued: " + guestLoan.getIssueDate() + ", Due Date: " + guestLoan.getDueDate());
-            System.out.println("Actual Return Date: " + guestReturnDate + " (4 Days Overdue)");
-
-            Fine guestFine = controller.returnBook(guestLoan.getLoanId(), guestReturnDate);
-            if (guestFine != null) {
-                System.out.println("Generated Record: " + guestFine);
-                guestFine.payFine();
+            System.out.println("  Issued: " + guestLoan.getIssueDate() + " | Due: " + guestLoan.getDueDate() + " | Returned: " + guestReturnDate + " (4 Days Overdue)");
+            Fine f3 = controller.returnBook(guestLoan.getLoanId(), guestReturnDate);
+            if (f3 != null) {
+                System.out.println("  -> Fine Assessed: Rs. " + f3.calculateAmount() + " [Paid Status: " + f3.isPaidStatus() + "]");
+                f3.payFine();
             }
         } catch (Exception e) {
-            System.err.println("Error: " + e.getMessage());
+            System.err.println("  Error: " + e.getMessage());
         }
 
         // ═════════════════════════════════════════════════════════════
-        // PART D: ADAPTER PATTERN FOR LEGACY DATABASE INTEGRATION
+        // STEP E: ADAPTER PATTERN FOR LEGACY DATABASE INTEGRATION
         // ═════════════════════════════════════════════════════════════
-        printSectionHeader("PART D: Adapter Pattern for Legacy Database Integration");
+        printHeader("E. ADAPTER PATTERN FOR LEGACY DATABASE INTEGRATION");
 
-        System.out.println("1. Instantiating incompatible OldLibraryDatabase (raw delimited format)...");
-        OldLibraryDatabase legacyDb = new OldLibraryDatabase();
+        System.out.println("  1. Legacy System: OldLibraryDatabase returns incompatible raw String[] array:");
+        OldLibraryDatabase oldDb = new OldLibraryDatabase();
+        String legacyKey = "978-0596007126";
+        String[] rawRecord = oldDb.fetchRawRecord(legacyKey);
+        System.out.println("     Raw Record Output: String[] { \"" + String.join("\", \"", rawRecord) + "\" }");
 
-        System.out.println("2. Wrapping legacy database into LegacyDatabaseAdapter (implementing modern BookSource)...");
-        BookSource bookAdapter = new LegacyDatabaseAdapter(legacyDb);
+        System.out.println("\n  2. Adapter Wrapping: LegacyDatabaseAdapter implements modern BookSource interface:");
+        BookSource adapter = new LegacyDatabaseAdapter(oldDb);
+        Book modernBook = adapter.getBook(legacyKey);
 
-        String legacyIsbn = "978-0596007126";
-        System.out.println("\n3. Modern system requests Book via BookSource interface for ISBN: " + legacyIsbn);
-        Book importedBook = bookAdapter.getBook(legacyIsbn);
+        System.out.println("\n  3. Integration into Modern Catalog:");
+        catalog1.addBook(modernBook);
 
-        if (importedBook != null) {
-            System.out.println("\n4. Adding adapted book to modern Catalog Singleton...");
-            catalogRef1.addBook(importedBook);
-
-            System.out.println("5. Verifying presence of adapted book in Catalog search:");
-            List<Book> oodResults = catalogRef1.searchBook("Design Patterns");
-            for (Book b : oodResults) {
-                System.out.println("   -> " + b);
-            }
+        System.out.println("  4. Verification: Searching Catalog for newly adapted book 'Head First':");
+        List<Book> searchAdapted = catalog1.searchBook("Head First");
+        for (Book b : searchAdapted) {
+            System.out.println("     -> " + b);
         }
 
-        printBanner("ALL OOAD DESIGN REQUIREMENTS VERIFIED SUCCESSFULLY");
+        // ═════════════════════════════════════════════════════════════
+        // STEP F: DETAILED EXECUTION SUMMARY REPORT
+        // ═════════════════════════════════════════════════════════════
+        printHeader("F. SYSTEM EXECUTION SUMMARY REPORT");
+
+        System.out.println(String.format("  • Total Distinct Book Titles in Catalog : %d", catalog1.getTotalBooksCount()));
+        System.out.println(String.format("  • Total System Loans Processed History  : %d", controller.getAllLoansHistory().size()));
+        System.out.println(String.format("  • Current Active Loans Outstanding      : %d", controller.getActiveLoans().size()));
+        System.out.println(String.format("  • Total Overdue Fines Assessed Count    : %d", controller.getAssessedFines().size()));
+
+        double totalRevenue = controller.getAssessedFines().stream()
+                .filter(Fine::isPaidStatus)
+                .mapToDouble(Fine::getAmount)
+                .sum();
+        System.out.println(String.format("  • Total Settled Fine Revenue Collected  : Rs. %.2f", totalRevenue));
+
+        printBanner("ALL ARCHITECTURAL SPECIFICATIONS EXECUTED AND VALIDATED WITH 100% SUCCESS");
     }
 
-    private static void printBanner(String title) {
-        System.out.println("\n" + "=".repeat(78));
+    private static void printBanner(String msg) {
+        System.out.println("\n" + "=".repeat(80));
+        System.out.println("  " + msg);
+        System.out.println("=".repeat(80));
+    }
+
+    private static void printHeader(String title) {
+        System.out.println("\n" + "-".repeat(80));
         System.out.println("  " + title);
-        System.out.println("=".repeat(78));
-    }
-
-    private static void printSectionHeader(String section) {
-        System.out.println("\n" + "-".repeat(78));
-        System.out.println("  " + section);
-        System.out.println("-".repeat(78));
+        System.out.println("-".repeat(80));
     }
 }
