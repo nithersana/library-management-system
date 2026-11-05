@@ -1,180 +1,123 @@
-# ⚛️ GRAVITON LIBRARY SYSTEM
+# 📖 LibraryOS — Library Management System
 
 <div align="center">
 
-![Graviton Library System](https://img.shields.io/badge/GRAVITON-LIBRARY%20SYSTEM-00FFFF?style=for-the-badge&logo=atom&logoColor=black)
+![LibraryOS](https://img.shields.io/badge/LibraryOS-Dark%20Glassmorphism-9C27B0?style=for-the-badge&logo=book&logoColor=white)
 ![React](https://img.shields.io/badge/React-18-61DAFB?style=for-the-badge&logo=react&logoColor=black)
 ![TailwindCSS](https://img.shields.io/badge/Tailwind-CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
-![No Backend](https://img.shields.io/badge/Backend-None%20(In--Memory)-7B2FBE?style=for-the-badge)
-![Single File](https://img.shields.io/badge/Deploy-Single%20HTML%20File-FF6B00?style=for-the-badge)
+![Java](https://img.shields.io/badge/Java-24%20OOAD-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)
+![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)
 
-**A fully functional Library Management System built as a single-page web app with an Antigravity / Deep Space visual theme.**
+**A dual-architecture Library Management System:**
+1. **Frontend:** Single-page web application featuring a Dark Glassmorphism visual theme with 5 animated HTML5 canvas floating gradient orbs and mesh grid.
+2. **Backend / Architecture:** Complete Java Object-Oriented Analysis & Design (OOAD / OOSE) implementation utilizing Singleton, Strategy, and Adapter design patterns.
 
-[🚀 Live Demo](#-quick-start) · [📸 Features](#-features) · [🔐 Login Credentials](#-login-credentials)
+[🚀 Quick Start](#-quick-start) · [✨ Features](#-features) · [🔐 Login Credentials](#-login-credentials) · [☕ Java OOAD System](#-java-ooad-architecture)
 
 </div>
 
 ---
 
-## 🌌 Visual Theme — Antigravity Deep Space
+## 🎨 Visual Theme — Dark Glassmorphism
 
-- **Animated canvas** with 300 drifting star particles and gravitational lensing warp near screen center
-- **Gravitational wave rings** pulsing from center every 3 seconds
-- **Glassmorphism cards** with `backdrop-filter: blur(12px)` and pulsing cyan borders
-- **Fonts:** Orbitron (headings) + Rajdhani (body) via Google Fonts
-- **Color Palette:**
-
-| Role | Color |
-|------|-------|
-| Background | `#000008` |
-| Primary Glow | `#00FFFF` (Cyan) |
-| Secondary | `#7B2FBE` (Purple) |
-| Accent | `#FF6B00` (Orange) |
-| Success | `#00FF88` |
-| Danger | `#FF3860` |
+- **Interactive Canvas Background:** 5 large gradient orbs (Deep Purple, Royal Blue, Indigo, Deep Azure, and Dark Violet) floating smoothly and bouncing dynamically across the viewport.
+- **Mesh Grid:** Subtle animated grid overlay at 5% opacity.
+- **Glassmorphism:** Frosted glass panels with `backdrop-filter: blur(20px) saturate(180%)`, soft purple/cyan glow borders, and hover elevations.
+- **Typography:** `Sora` for modern headers and `Inter` for clean body text.
+- **Palette:**
+  - Base: `#0B0B1A`
+  - Purple Accents: `#CE93D8`, `#9C27B0`, `#E040FB`
+  - Blue Accents: `#90CAF9`, `#1565C0`, `#448AFF`
+  - Indicators: Success `#69F0AE`, Danger `#FF5252`, Warning `#FFD740`
 
 ---
 
-## 🚀 Quick Start
+## 🚀 Quick Start (Web Application)
 
-No build step, no `npm install`, no server needed.
+No build step, no Node.js, and no `npm install` needed!
 
 ```bash
-# Clone the repo
-git clone https://github.com/YOUR_USERNAME/graviton-library-system.git
+# Clone the repository
+git clone https://github.com/YOUR_USERNAME/library-management-system.git
+
+# Navigate to project directory
+cd library-management-system
 
 # Open in browser
 start index.html          # Windows
 open index.html           # macOS
 xdg-open index.html       # Linux
 ```
-
-Or just **double-click `index.html`** — it runs entirely in your browser.
-
----
-
-## 🔐 Login Credentials
-
-| Role | Username | Password |
-|------|----------|----------|
-| 👩‍💼 Librarian | `librarian` | `lib123` |
-| 🎓 Student Member | `student1` | `mem123` |
-| 👨‍🏫 Faculty Member | `faculty1` | `fac123` |
-| 🛡️ Admin | `admin` | `adm123` |
-
-> Quick-login buttons are also available directly on the login screen.
+Or simply **double-click `index.html`** in your file manager.
 
 ---
 
-## 📚 Features
+## 🔐 Demo Credentials
 
-### 🔐 Authentication
-- Role-based login (Librarian / Member / Admin)
-- Quick-login preset buttons with credential badges
-- Ripple click effect on login button
-- Password update via member profile (reflected immediately in login)
+| Role | Username | Password | Default Borrow Limit |
+|---|---|---|---|
+| 👩‍💼 **Librarian** | `librarian` | `lib123` | System Staff |
+| 🎓 **Student Member** | `student1` | `mem123` | 3 Books Max |
+| 👨‍🏫 **Faculty Member** | `faculty1` | `fac123` | 5 Books Max |
+| 🛡️ **Admin** | `admin` | `adm123` | Full Access |
 
-### 📖 Librarian Dashboard (7 pages)
-| Page | Features |
-|------|----------|
-| **Dashboard** | 6 real-time stat cards — Total Books, Available, Active Loans, Overdue, Members, Fines |
-| **Manage Books** | Add / Edit / Delete books, live sortable + searchable table |
-| **Issue Book** | Member + book dropdowns, availability check, borrow limit check, 15-day due date |
-| **Return Book** | Active loans table, auto overdue detection, fine calculation (₹2/day), reservation alert on return |
-| **Manage Members** | Register / delete members, active loan count + unpaid fine totals |
-| **Reservations** | Pending reservation queue with cancel action |
-| **Reports** | All Books · Overdue Loans (red highlight) · Fine Collection Summary |
-
-### 👤 Member Dashboard (6 pages)
-| Page | Features |
-|------|----------|
-| **My Dashboard** | Welcome card with membership ID, quick stats |
-| **Search Books** | Live filter by title/author/category, book cards, Borrow / Reserve buttons |
-| **My Loans** | Full loan history with ACTIVE / OVERDUE / RETURNED status badges |
-| **My Reservations** | View and cancel reservations |
-| **My Fines** | Pay fines with glowing confirmation animation |
-| **My Profile** | Edit email and password |
-
-### ⚙️ Admin Dashboard (3 pages)
-| Page | Features |
-|------|----------|
-| **User Management** | Tab view Librarians / Members, create and delete accounts |
-| **System Settings** | Toggle reservations, auto-fine, set fine rate and max books per member |
-| **Reports** | Full system metrics — all data in one view |
+*(Quick one-click login buttons are also provided directly on the login screen).*
 
 ---
 
-## ⚡ Functional Highlights
+## 📚 Web App Core Pages
 
-- ✅ Loan counter starts at `LN1000`, Fine counter `FN100`, Reservation counter `RV100`
-- ✅ Borrow limit validation per member type (Student: 3, Faculty: 5)
-- ✅ Overdue auto-detection and fine calculation (configurable rate, default ₹2/day)
-- ✅ Reservation system — triggered when book has 0 copies available
-- ✅ Notification when a returned book has a pending reservation
-- ✅ Column sort on every table header (toggle ▲ / ▼)
-- ✅ Search/filter input above every table
-- ✅ Real-time dashboard stat updates
-- ✅ Form validation with red glowing error messages
-- ✅ Toast notifications — success (green) / error (red) / warning (orange), auto-dismiss 3s
-- ✅ Modal close on backdrop click and ✕ button
-- ✅ Empty state messages with icons
-- ✅ Smooth page transitions (fade in/out)
-- ✅ Live clock in header (top-right)
-- ✅ Star particle count in bottom-left corner
-- ✅ Mobile responsive — sidebar collapses to bottom tab bar on `< 768px`
+1. **🔐 Login Terminal:** Glassmorphism card with role badges and password validation.
+2. **📊 Dashboard:** 6 real-time stat cards with animated count-up numbers (`Total Books`, `Available`, `Active Loans`, `Overdue Loans`, `Members`, `Fines`), activity stream, and quick shortcuts.
+3. **📚 Manage Books:** Real-time search, multi-column sorting, add/edit book modal with validation, and delete with active loan safeguards.
+4. **📤 Issue Book:** Member & book selectors (availability-checked), live animated loan preview card, quota limit checks, and 15-day return scheduling.
+5. **📥 Return Book:** Active loan registry, live overdue calculation (₹2/day), and return modal with instant fine payment.
+6. **👥 Manage Members:** Member directory with avatar initials, quota indicators, and registration modal.
+7. **🔖 Reservations:** Hold queue for checked-out materials with self-cancellation option.
+8. **📈 Reports & Audit:** Full catalogue status, overdue audit table, financial breakdown, and a clean print stylesheet (`🖨️ Print Report`).
 
 ---
 
-## 🛠 Tech Stack
+## ☕ Java OOAD Architecture (`java_system/`)
 
-| Technology | Purpose |
-|------------|---------|
-| **React 18** (CDN) | UI components and state management via `useState`, `useEffect`, `useReducer`, `useMemo`, `useCallback` |
-| **Tailwind CSS** (CDN) | Utility styling |
-| **Babel Standalone** (CDN) | In-browser JSX transpilation |
-| **HTML5 Canvas** | Animated star field and gravitational wave rings |
-| **Google Fonts** | Orbitron + Rajdhani |
-
-> **No Node.js, no npm, no bundler required.**  
-> All dependencies load from CDN. Works offline after first load if CDNs are cached.
-
----
-
-## 📁 Project Structure
+A production-ready Object-Oriented Analysis & Design implementation in Java 24:
 
 ```
-graviton-library-system/
-├── index.html                    # ← Entire application (single file)
-├── Graviton_Library_Source_Code.pdf  # Source code as PDF
-├── README.md
-├── .gitignore
-└── LICENSE
+java_system/
+├── src/com/library/
+│   ├── model/         # User (Abstract), Member, Librarian, Admin, Book, Loan, Fine
+│   ├── catalog/       # Catalog (Thread-safe Singleton using double-checked locking)
+│   ├── strategy/      # FineStrategy (Student @ ₹1/d, Faculty @ ₹0.5/d, Guest @ ₹3/d)
+│   ├── adapter/       # BookSource & LegacyDatabaseAdapter adapting OldLibraryDatabase (raw String[])
+│   ├── exception/     # BookUnavailableException, BorrowingLimitExceededException, BookNotFoundException
+│   ├── controller/    # LibraryController (orchestration & business rules)
+│   └── Main.java      # Comprehensive test driver verifying all requirements
+```
+
+### Run the Java Demo:
+```bash
+cd java_system
+javac -d bin src/com/library/*.java src/com/library/*/*.java
+java -cp bin com.library.Main
 ```
 
 ---
 
-## 📦 Pre-loaded Sample Data
+## 📁 Repository Structure
 
-### Books (8 titles)
-| ISBN | Title | Author | Category | Copies |
-|------|-------|--------|----------|--------|
-| 978-1 | Effective Java | Joshua Bloch | Programming | 3 |
-| 978-2 | Clean Code | Robert Martin | Programming | 2 |
-| 978-3 | The Pragmatic Programmer | David Thomas | Programming | 4 |
-| 978-4 | Design Patterns | Gang of Four | Architecture | 2 |
-| 978-5 | Introduction to Algorithms | Cormen | Computer Science | 5 |
-| 978-6 | Artificial Intelligence | Russell and Norvig | AI | 3 |
-| 978-7 | Database Systems | Ramakrishnan | Database | 2 |
-| 978-8 | Operating Systems | Silberschatz | Systems | 4 |
+```
+├── index.html                    # Single-Page Web App (Dark Glassmorphism)
+├── LibraryOS_Source_Code.pdf     # Formatted 7-page source code document
+├── java_system/                  # Complete Java OOAD Enterprise Design
+│   ├── src/                      # Java Source Code
+│   └── bin/                      # Compiled Bytecode (.class)
+├── README.md                     # Documentation
+├── LICENSE                       # MIT License
+└── .gitignore                    # Git Ignore rules
+```
 
 ---
 
 ## 📄 License
 
-MIT License — see [LICENSE](LICENSE) for details.
-
----
-
-<div align="center">
-  Made with 💙 and deep-space energy &nbsp;·&nbsp; ⚛️ GRAVITON LIBRARY SYSTEM
-</div>
+This project is licensed under the [MIT License](LICENSE).
